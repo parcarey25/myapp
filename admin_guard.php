@@ -1,16 +1,15 @@
-<<<<<<< HEAD
 <?php
-require __DIR__.'/auth.php';
-if (($_SESSION['role'] ?? 'member') !== 'admin') {
-  http_response_code(403);
-  die('Forbidden: admin only');
+// admin_guard.php - ensure only admins can access a page
+
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
 }
-=======
-<?php
-require __DIR__.'/auth.php';
-if (($_SESSION['role'] ?? 'member') !== 'admin') {
-  http_response_code(403);
-  die('Forbidden: admin only');
+
+require __DIR__ . '/auth.php';
+
+if (strtolower($_SESSION['role'] ?? 'member') !== 'admin') {
+    http_response_code(403);
+    die('Forbidden: admin only');
 }
->>>>>>> b78dc527f4ca1b402224214aa4f78775c370647f
-require __DIR__.'/db.php';
+
+require __DIR__ . '/db.php';
