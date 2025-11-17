@@ -4,6 +4,7 @@ SMTP skipped: host/user missing
 SMTP skipped: host/user missing
 === sendLoginEmail() called for parcareyleon25@gmail.com at 2025-11-12T19:55:43+01:00 ===
 SMTP skipped: host/user missing
+<<<<<<< HEAD
 === sendLoginEmail() called for member3@gmail.com at 2025-11-14T16:14:28+01:00 ===
 SMTP skipped: host/user missing
 === sendLoginEmail() called for stafftwo@gmail.com at 2025-11-14T18:42:23+01:00 ===
@@ -34,3 +35,5 @@ SMTP skipped: host/user missing
 SMTP skipped: host/user missing
 === sendLoginEmail() called for traner2@gmail.com at 2025-11-15T18:37:42+01:00 ===
 SMTP skipped: host/user missing
+=======
+>>>>>>> b78dc527f4ca1b402224214aa4f78775c370647f
