@@ -1,392 +1,283 @@
-<<<<<<< HEAD
 <?php
-// FILE: attendance.php
-// Shared attendance page for both members and staff/admin.
+// attendance.php – member view of their own attendance
+// Reads from the same attendance table that all_attendance.php uses.
 
-require_once 'auth.php';
-require_once 'db.php';
-
-$user_id = $_SESSION['user_id'] ?? 0;
-$role    = $_SESSION['role'] ?? '';
-
-if ($user_id <= 0) {
-    die("Access denied.");
+if (session_status() === PHP_SESSION_NONE) {
+    session_start();
 }
 
-$isMember = ($role === 'member');
-$isStaff  = ($role === 'trainer' || $role === 'admin');
-
-
-// ===========================
-// MEMBER VIEW (MY ATTENDANCE)
-// ===========================
-if ($isMember) {
-
-    $year  = isset($_GET['year'])  ? (int)$_GET['year']  : (int)date('Y');
-    $month = isset($_GET['month']) ? (int)$_GET['month'] : (int)date('m');
-
-    $start_date = sprintf('%04d-%02d-01', $year, $month);
-    $end_date   = date('Y-m-t', strtotime($start_date));
-
-    $stmt = $conn->prepare("
-        SELECT check_in, check_out
-        FROM attendance
-        WHERE user_id = ?
-          AND DATE(check_in) BETWEEN ? AND ?
-        ORDER BY check_in ASC
-    ");
-    $stmt->bind_param('iss', $user_id, $start_date, $end_date);
-    $stmt->execute();
-    $res  = $stmt->get_result();
-    $logs = $res->fetch_all(MYSQLI_ASSOC);
-    $stmt->close();
-
-    $total_visits = count($logs);
-    ?>
-    <!doctype html>
-    <html>
-    <head>
-        <meta charset="utf-8">
-        <title>My Attendance</title>
-        <style>
-            :root {
-                --bg-card: #181818;
-                --accent-red: #e53935;
-                --accent-red-dark: #b71c1c;
-                --text-light: #f5f5f5;
-                --text-muted: #aaaaaa;
-                --border-soft: #2a2a33;
-            }
-            * {
-                box-sizing: border-box;
-                font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-            }
-            body {
-                margin: 0;
-                background: #000;
-                color: var(--text-light);
-            }
-            .wrapper {
-                max-width: 1100px;
-                margin: 40px auto;
-                padding: 0 16px;
-            }
-            .card {
-                background: var(--bg-card);
-                border-radius: 16px;
-                border: 1px solid var(--border-soft);
-                padding: 24px 24px 28px;
-                box-shadow: 0 16px 40px rgba(0,0,0,0.6);
-            }
-            .card-header {
-                display: flex;
-                justify-content: space-between;
-                align-items: baseline;
-                margin-bottom: 18px;
-                border-bottom: 1px solid var(--border-soft);
-                padding-bottom: 10px;
-            }
-            .title {
-                font-size: 1.6rem;
-                font-weight: 600;
-            }
-            .tagline {
-                font-size: 0.85rem;
-                color: var(--accent-red);
-                text-transform: uppercase;
-                letter-spacing: 0.15em;
-            }
-            .pill {
-                display: inline-block;
-                padding: 3px 8px;
-                border-radius: 999px;
-                font-size: 0.75rem;
-                text-transform: uppercase;
-                letter-spacing: 0.08em;
-                background: rgba(76, 175, 80, 0.15);
-                color: #4caf50;
-            }
-            form.filters {
-                display: flex;
-                flex-wrap: wrap;
-                gap: 10px;
-                align-items: flex-end;
-                margin-bottom: 14px;
-            }
-            label {
-                font-size: 0.8rem;
-                color: var(--text-muted);
-                text-transform: uppercase;
-                letter-spacing: 0.08em;
-                display: block;
-                margin-bottom: 4px;
-            }
-            select {
-                padding: 7px 10px;
-                border-radius: 8px;
-                border: 1px solid var(--border-soft);
-                background: #101010;
-                color: var(--text-light);
-                outline: none;
-            }
-            select:focus {
-                border-color: var(--accent-red);
-                box-shadow: 0 0 0 1px rgba(229,57,53,0.3);
-            }
-            button {
-                border: none;
-                border-radius: 999px;
-                padding: 8px 16px;
-                font-size: 0.9rem;
-                font-weight: 600;
-                letter-spacing: 0.08em;
-                text-transform: uppercase;
-                cursor: pointer;
-                background: var(--accent-red);
-                color: #fff;
-                transition: background 0.15s ease, transform 0.1s ease;
-            }
-            button:hover {
-                background: var(--accent-red-dark);
-                transform: translateY(-1px);
-            }
-            .summary {
-                font-size: 0.9rem;
-                color: var(--text-muted);
-                margin-bottom: 10px;
-            }
-            .summary strong {
-                color: var(--accent-red);
-            }
-            table {
-                width: 100%;
-                border-collapse: collapse;
-                font-size: 0.9rem;
-                margin-top: 8px;
-            }
-            th, td {
-                padding: 8px 10px;
-                border-bottom: 1px solid var(--border-soft);
-                text-align: left;
-            }
-            th {
-                font-size: 0.78rem;
-                text-transform: uppercase;
-                letter-spacing: 0.08em;
-                color: var(--text-muted);
-            }
-            .back-link {
-                display: inline-block;
-                margin-bottom: 12px;
-                font-size: 0.85rem;
-                color: #fff;
-                text-decoration: none;
-                border-radius: 999px;
-                border: 1px solid var(--accent-red);
-                padding: 6px 12px;
-            }
-            .back-link:hover {
-                background: var(--accent-red);
-            }
-        </style>
-    </head>
-    <body>
-    <div class="wrapper">
-        <a href="home_member.php" class="back-link">&laquo; Back to Dashboard</a>
-
-        <div class="card">
-            <div class="card-header">
-                <div>
-                    <div class="tagline">RJL FITNESS · MEMBER</div>
-                    <div class="title">My Attendance</div>
-                </div>
-                <span class="pill">RFID Logged</span>
-            </div>
-
-            <form method="get" class="filters">
-                <div>
-                    <label>Month</label>
-                    <select name="month">
-                        <?php for ($m = 1; $m <= 12; $m++): ?>
-                            <option value="<?= $m ?>" <?= $m === $month ? 'selected' : '' ?>>
-                                <?= date('F', mktime(0,0,0,$m,1)) ?>
-                            </option>
-                        <?php endfor; ?>
-                    </select>
-                </div>
-                <div>
-                    <label>Year</label>
-                    <select name="year">
-                        <?php
-                        $currentYear = (int)date('Y');
-                        for ($y = $currentYear - 3; $y <= $currentYear; $y++): ?>
-                            <option value="<?= $y ?>" <?= $y === $year ? 'selected' : '' ?>>
-                                <?= $y ?>
-                            </option>
-                        <?php endfor; ?>
-                    </select>
-                </div>
-                <div>
-                    <button type="submit">View</button>
-                </div>
-            </form>
-
-            <p class="summary">
-                Showing <strong><?= $total_visits ?></strong> visit<?= $total_visits === 1 ? '' : 's' ?>
-                from <strong><?= htmlspecialchars($start_date) ?></strong>
-                to <strong><?= htmlspecialchars($end_date) ?></strong>.
-            </p>
-
-            <table>
-                <tr>
-                    <th>Date</th>
-                    <th>Time In</th>
-                    <th>Time Out</th>
-                </tr>
-                <?php if (!$logs): ?>
-                    <tr><td colspan="3">No attendance records for this period.</td></tr>
-                <?php else: ?>
-                    <?php foreach ($logs as $log): ?>
-                        <?php
-                        $date    = date('Y-m-d', strtotime($log['check_in']));
-                        $time_in = date('H:i', strtotime($log['check_in']));
-                        $time_out = $log['check_out'] ? date('H:i', strtotime($log['check_out'])) : '-';
-                        ?>
-                        <tr>
-                            <td><?= htmlspecialchars($date) ?></td>
-                            <td><?= htmlspecialchars($time_in) ?></td>
-                            <td><?= htmlspecialchars($time_out) ?></td>
-                        </tr>
-                    <?php endforeach; ?>
-                <?php endif; ?>
-            </table>
-        </div>
-    </div>
-    </body>
-    </html>
-    <?php
+if (!isset($_SESSION['user_id'])) {
+    header('Location: login.php');
     exit;
 }
 
+require __DIR__ . '/db.php';
 
-// ===============================
-// STAFF / ADMIN VIEW (ALL USERS)
-// ===============================
-if ($isStaff) {
+$userId   = (int)($_SESSION['user_id'] ?? 0);
+$username = $_SESSION['full_name'] ?? ($_SESSION['username'] ?? 'Member');
+$role     = strtolower($_SESSION['role'] ?? 'member');
 
-    $date = isset($_GET['date']) && $_GET['date'] !== '' ? $_GET['date'] : date('Y-m-d');
+/* ------------------------------------------------------------------
+   Helpers to detect column names so this works with your existing DB
+-------------------------------------------------------------------*/
+function has_col(mysqli $conn, string $table, string $col): bool {
+    $sql = "SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS
+            WHERE TABLE_SCHEMA = DATABASE()
+              AND TABLE_NAME = ?
+              AND COLUMN_NAME = ?
+            LIMIT 1";
+    if (!$st = $conn->prepare($sql)) return false;
+    $st->bind_param('ss', $table, $col);
+    $st->execute();
+    $res = $st->get_result();
+    $ok  = $res && $res->num_rows > 0;
+    if ($res) $res->free();
+    $st->close();
+    return $ok;
+}
 
-    $stmt = $conn->prepare("
-        SELECT a.check_in, a.check_out, u.full_name, u.username
-        FROM attendance a
-        JOIN users u ON u.id = a.user_id
-        WHERE DATE(a.check_in) = ?
-        ORDER BY a.check_in ASC
-    ");
-    $stmt->bind_param('s', $date);
-    $stmt->execute();
-    $res = $stmt->get_result();
-    $logs = $res->fetch_all(MYSQLI_ASSOC);
-    $stmt->close();
+function h($v) { return htmlspecialchars($v ?? '', ENT_QUOTES, 'UTF-8'); }
 
-    $total_checkins = count($logs);
+function fmt_date($d) {
+    if (!$d) return '—';
+    $ts = strtotime($d);
+    if ($ts === false) return $d;
+    return date('M d, Y', $ts);
+}
 
-    // compute unique members
-    $usernames_seen = [];
-    foreach ($logs as $row) {
-        $uname = $row['username'];
-        $usernames_seen[$uname] = true;
+function fmt_time($t) {
+    if (!$t) return '—';
+    $ts = strtotime($t);
+    if ($ts === false) return $t;
+    return date('h:i A', $ts);
+}
+
+function fmt_duration($in, $out) {
+    if (!$in || !$out) return '—';
+    $ti = strtotime($in);
+    $to = strtotime($out);
+    if ($ti === false || $to === false || $to <= $ti) return '—';
+    $mins = (int)(($to - $ti) / 60);
+    $h = intdiv($mins, 60);
+    $m = $mins % 60;
+    return sprintf('%02dh %02dm', $h, $m);
+}
+
+/* ------------------------------------------------------------------
+   Figure out which columns your attendance table uses
+-------------------------------------------------------------------*/
+
+$table = 'attendance';
+
+// which column identifies the user? user_id or id_number?
+$useUserId   = has_col($conn, $table, 'user_id');
+$useIdNumber = !$useUserId && has_col($conn, $table, 'id_number');
+
+// which column is the date?
+if (has_col($conn, $table, 'attendance_date')) {
+    $dateCol = 'attendance_date';
+} elseif (has_col($conn, $table, 'att_date')) {
+    $dateCol = 'att_date';
+} else {
+    // fallback
+    $dateCol = 'date';
+}
+
+// time columns
+$timeInCol  = has_col($conn, $table, 'time_in')  ? 'time_in'  : 'check_in';
+$timeOutCol = has_col($conn, $table, 'time_out') ? 'time_out' : 'check_out';
+
+// if table uses id_number, fetch the member's id_number
+$idNumber = '';
+if ($useIdNumber) {
+    if ($st = $conn->prepare("SELECT id_number FROM users WHERE id = ? LIMIT 1")) {
+        $st->bind_param('i', $userId);
+        $st->execute();
+        if ($res = $st->get_result()) {
+            if ($row = $res->fetch_assoc()) {
+                $idNumber = $row['id_number'] ?? '';
+            }
+            $res->free();
+        }
+        $st->close();
     }
-    $unique_members = count($usernames_seen);
-    ?>
-    <!doctype html>
-    <html>
-    <head>
-        <meta charset="utf-8">
-        <title>Daily Attendance (All Members)</title>
-        <style>
-            :root {
-                --bg-card:#181818;
-                --accent-red:#e53935;
-                --accent-red-dark:#b71c1c;
-                --text-light:#f5f5f5;
-                --text-muted:#aaaaaa;
-                --border-soft:#2a2a33;
-            }
-            *{box-sizing:border-box;font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;}
-            body{margin:0;background:#000;color:var(--text-light);}
-            .wrapper{max-width:1100px;margin:40px auto;padding:0 16px;}
-            .card{background:var(--bg-card);border-radius:16px;border:1px solid var(--border-soft);
-                  padding:24px 24px 28px;box-shadow:0 16px 40px rgba(0,0,0,0.6);}
-            .card-header{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:18px;
-                         border-bottom:1px solid var(--border-soft);padding-bottom:10px;}
-            .title{font-size:1.6rem;font-weight:600;}
-            .tagline{font-size:0.85rem;color:var(--accent-red);text-transform:uppercase;letter-spacing:0.15em;}
-            .pill{display:inline-block;padding:3px 8px;border-radius:999px;font-size:0.75rem;
-                  text-transform:uppercase;letter-spacing:0.08em;background:rgba(229,57,53,0.12);color:var(--accent-red);}
-            label{font-size:0.8rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;display:block;margin-bottom:4px;}
-            input{padding:7px 10px;border-radius:8px;border:1px solid var(--border-soft);background:#101010;color:var(--text-light);outline:none;}
-            input:focus{border-color:var(--accent-red);box-shadow:0 0 0 1px rgba(229,57,53,0.3);}
-            button{border:none;border-radius:999px;padding:8px 16px;font-size:0.9rem;font-weight:600;
-                   letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;background:var(--accent-red);color:#fff;
-                   transition:background 0.15s ease,transform 0.1s ease;}
-            button:hover{background:var(--accent-red-dark);transform:translateY(-1px);}
-            .summary{margin-top:10px;font-size:0.9rem;color:var(--text-muted);}
-            .summary strong{color:var(--accent-red);}
-            table{width:100%;border-collapse:collapse;margin-top:10px;font-size:0.9rem;}
-            th,td{padding:8px 10px;border-bottom:1px solid var(--border-soft);text-align:left;}
-            th{text-transform:uppercase;letter-spacing:0.08em;font-size:0.78rem;color:var(--text-muted);}
-        </style>
-    </head>
-    <body>
-    <div class="wrapper">
-        <div class="card">
-            <div class="card-header">
-                <div>
-                    <div class="tagline">RJL FITNESS · STAFF</div>
-                    <div class="title">Daily Attendance (All Members)</div>
-                </div>
-                <span class="pill"><?= htmlspecialchars(strtoupper($role)) ?></span>
-            </div>
-
-            <form method="get">
-                <label for="date">Select Date</label>
-                <input type="date" id="date" name="date" value="<?= htmlspecialchars($date) ?>">
-                <button type="submit">View</button>
-            </form>
-
-            <p class="summary">
-                Total check-ins: <strong><?= $total_checkins ?></strong> ·
-                Unique members: <strong><?= $unique_members ?></strong>
-            </p>
-
-            <table>
-                <tr>
-                    <th>Member</th>
-                    <th>Username</th>
-                    <th>Time In</th>
-                    <th>Time Out</th>
-                </tr>
-                <?php if (!$logs): ?>
-                    <tr><td colspan="4">No attendance records for this day.</td></tr>
-                <?php else: ?>
-                    <?php foreach ($logs as $log): ?>
-                        <tr>
-                            <td><?= htmlspecialchars($log['full_name'] ?? '') ?></td>
-                            <td><?= htmlspecialchars($log['username'] ?? '') ?></td>
-                            <td><?= htmlspecialchars($log['check_in']) ?></td>
-                            <td><?= htmlspecialchars($log['check_out'] ?? '-') ?></td>
-                        </tr>
-                    <?php endforeach; ?>
-                <?php endif; ?>
-            </table>
-        </div>
-    </div>
-    </body>
-    </html>
-    <?php
-    exit;
 }
 
-// any other role falls through here
-die("Access denied.");
+/* ------------------------------------------------------------------
+   Optional date filter (so member can filter by a specific day)
+-------------------------------------------------------------------*/
+$selectedDate = $_GET['date'] ?? '';
+$selectedDateSql = null;
+if ($selectedDate !== '' && preg_match('/^\d{4}-\d{2}-\d{2}$/', $selectedDate)) {
+    $selectedDateSql = $selectedDate;
+}
+
+/* ------------------------------------------------------------------
+   Load this member's attendance rows
+-------------------------------------------------------------------*/
+$rows = [];
+$where = " WHERE 1=1 ";
+$params = [];
+$types  = '';
+
+if ($useUserId) {
+    $where .= " AND user_id = ? ";
+    $params[] = $userId;
+    $types   .= 'i';
+} elseif ($useIdNumber && $idNumber !== '') {
+    $where .= " AND id_number = ? ";
+    $params[] = $idNumber;
+    $types   .= 's';
+} else {
+    // can't identify user; return empty
+    $rows = [];
+}
+
+if ($selectedDateSql && ($useUserId || $useIdNumber)) {
+    $where .= " AND {$dateCol} = ? ";
+    $params[] = $selectedDateSql;
+    $types   .= 's';
+}
+
+if ($useUserId || $useIdNumber) {
+    $sql = "SELECT id, {$dateCol} AS att_date,
+                   {$timeInCol} AS time_in,
+                   {$timeOutCol} AS time_out
+            FROM {$table}
+            {$where}
+            ORDER BY {$dateCol} DESC, {$timeInCol} ASC";
+
+    if ($st = $conn->prepare($sql)) {
+        if ($types !== '') {
+            $st->bind_param($types, ...$params);
+        }
+        $st->execute();
+        if ($res = $st->get_result()) {
+            $rows = $res->fetch_all(MYSQLI_ASSOC);
+            $res->free();
+        }
+        $st->close();
+    }
+}
+?>
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>My Attendance | RJL Fitness</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/css/bootstrap.min.css">
+<style>
+:root{
+  --bg:#101010;
+  --panel:#171717;
+  --line:#2a2a2a;
+  --brand:#b30000;
+}
+body{
+  background:var(--bg);
+  color:#fff;
+  font-family:'Poppins',sans-serif;
+}
+.navbar{
+  background:linear-gradient(90deg,#000,var(--brand));
+}
+.card{
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:14px;
+}
+.table-dark{
+  background:#141414;
+}
+.table-dark th, .table-dark td{
+  border-color:#262626;
+}
+.btn-danger{
+  background:var(--brand);
+  border:none;
+}
+.btn-danger:hover{
+  background:#ff1a1a;
+}
+.form-control{
+  background:#121212;
+  border:1px solid #2a2a2a;
+  color:#eee;
+}
+small.text-muted{
+  color:#9aa0a6 !important;
+}
+</style>
+</head>
+<body>
+<nav class="navbar navbar-dark">
+  <a class="navbar-brand ml-3" href="home.php">
+    <img src="photo/logo.jpg" height="32" class="mr-2" alt="">RJL Fitness
+  </a>
+  <div class="ml-auto mr-3">
+    <span class="mr-3">Welcome, <?= h($username) ?></span>
+    <a class="btn btn-outline-light btn-sm mr-2" href="home.php">Dashboard</a>
+    <a class="btn btn-danger btn-sm" href="logout.php">Logout</a>
+  </div>
+</nav>
+
+<div class="container my-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+      <h3 class="mb-0">My Attendance</h3>
+      <small class="text-muted">
+        This list only shows your own attendance records saved from the staff page.
+      </small>
+    </div>
+    <form method="get" class="form-inline">
+      <label class="mr-2 mb-1">Date</label>
+      <input type="date" name="date" class="form-control mr-2 mb-1"
+             value="<?= h($selectedDateSql ?? '') ?>">
+      <button class="btn btn-danger mb-1">Filter</button>
+    </form>
+  </div>
+
+  <div class="card p-3">
+    <?php if (!$rows): ?>
+      <div class="alert alert-secondary mb-0">
+        No attendance records found yet.
+        <br>
+        Once staff log your time in/out in <strong>All Attendance</strong> and click
+        <strong>Save</strong>, your logs will appear here.
+      </div>
+    <?php else: ?>
+      <div class="table-responsive">
+        <table class="table table-dark table-striped table-hover table-sm mb-0">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Date</th>
+              <th>Time In</th>
+              <th>Time Out</th>
+              <th>Duration</th>
+            </tr>
+          </thead>
+          <tbody>
+            <?php foreach ($rows as $idx => $r): ?>
+              <tr>
+                <td><?= $idx + 1 ?></td>
+                <td><?= h(fmt_date($r['att_date'] ?? '')) ?></td>
+                <td><?= h(fmt_time($r['time_in'] ?? '')) ?></td>
+                <td><?= h(fmt_time($r['time_out'] ?? '')) ?></td>
+                <td><?= h(fmt_duration($r['time_in'] ?? '', $r['time_out'] ?? '')) ?></td>
+              </tr>
+            <?php endforeach; ?>
+          </tbody>
+        </table>
+      </div>
+    <?php endif; ?>
+  </div>
+
+  <div class="mt-3">
+    <a class="btn btn-outline-light" href="home.php">Back to Dashboard</a>
+  </div>
+</div>
+</body>
+</html>

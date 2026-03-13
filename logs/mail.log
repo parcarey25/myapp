@@ -1,39 +1,38 @@
-=== sendLoginEmail() called for parcareyleon25@gmail.com at 2025-11-12T18:56:37+01:00 ===
-SMTP skipped: host/user missing
-=== sendLoginEmail() called for parcareyleon25@gmail.com at 2025-11-12T19:55:26+01:00 ===
-SMTP skipped: host/user missing
-=== sendLoginEmail() called for parcareyleon25@gmail.com at 2025-11-12T19:55:43+01:00 ===
-SMTP skipped: host/user missing
-<<<<<<< HEAD
-=== sendLoginEmail() called for member3@gmail.com at 2025-11-14T16:14:28+01:00 ===
-SMTP skipped: host/user missing
-=== sendLoginEmail() called for stafftwo@gmail.com at 2025-11-14T18:42:23+01:00 ===
-SMTP skipped: host/user missing
-=== sendLoginEmail() called for member3@gmail.com at 2025-11-14T19:59:58+01:00 ===
-SMTP skipped: host/user missing
-=== sendLoginEmail() called for stafftwo@gmail.com at 2025-11-14T20:36:04+01:00 ===
-SMTP skipped: host/user missing
-=== sendLoginEmail() called for stafftwo@gmail.com at 2025-11-15T01:33:42+01:00 ===
-SMTP skipped: host/user missing
-=== sendLoginEmail() called for stafftwo@gmail.com at 2025-11-15T17:41:48+01:00 ===
-SMTP skipped: host/user missing
-=== sendLoginEmail() called for member3@gmail.com at 2025-11-15T18:21:58+01:00 ===
-SMTP skipped: host/user missing
-=== sendLoginEmail() called for member3@gmail.com at 2025-11-15T18:22:28+01:00 ===
-SMTP skipped: host/user missing
-=== sendLoginEmail() called for traner2@gmail.com at 2025-11-15T18:24:22+01:00 ===
-SMTP skipped: host/user missing
-=== sendLoginEmail() called for traner2@gmail.com at 2025-11-15T18:33:44+01:00 ===
-SMTP skipped: host/user missing
-=== sendLoginEmail() called for traner2@gmail.com at 2025-11-15T18:33:55+01:00 ===
-SMTP skipped: host/user missing
-=== sendLoginEmail() called for traner2@gmail.com at 2025-11-15T18:34:06+01:00 ===
-SMTP skipped: host/user missing
-=== sendLoginEmail() called for traner2@gmail.com at 2025-11-15T18:34:32+01:00 ===
-SMTP skipped: host/user missing
-=== sendLoginEmail() called for traner2@gmail.com at 2025-11-15T18:37:25+01:00 ===
-SMTP skipped: host/user missing
-=== sendLoginEmail() called for traner2@gmail.com at 2025-11-15T18:37:42+01:00 ===
-SMTP skipped: host/user missing
-=======
->>>>>>> b78dc527f4ca1b402224214aa4f78775c370647f
+[2025-11-21 14:44:45] login email error: SMTP Error: Could not connect to SMTP host. Failed to connect to server SMTP server error: Failed to connect to server Additional SMTP info: php_network_getaddresses: getaddrinfo for smtp.gmail.com failed: No such host is known. 
+[2025-11-21 14:57:27] login email error: SMTP Error: Could not connect to SMTP host. Connection failed. stream_socket_enable_crypto(): SSL: An existing connection was forcibly closed by the remote host SMTP server error: QUIT command failed
+[2025-11-21 14:57:48] login email error: SMTP Error: Could not connect to SMTP host. Failed to connect to server SMTP server error: Failed to connect to server SMTP code: 10060 Additional SMTP info: A connection attempt failed because the connected party did not properly respond after a period of time, or established connection failed because connected host has failed to respond
+[2025-11-21 14:58:11] login email error: SMTP Error: Could not connect to SMTP host. Failed to connect to server SMTP server error: Failed to connect to server SMTP code: 10060 Additional SMTP info: A connection attempt failed because the connected party did not properly respond after a period of time, or established connection failed because connected host has failed to respond
+[2025-11-21 15:37:50] wallet load receipt email error: SMTP Error: data not accepted. SMTP server error: DATA END command failed
+[2026-02-18 21:50:15] login email error: SMTP Error: Could not authenticate.
+[2026-02-18 21:51:32] login email error: SMTP Error: Could not authenticate.
+[2026-02-18 21:52:37] login email error: SMTP Error: Could not authenticate.
+[2026-02-18 21:52:40] login email error: SMTP Error: Could not authenticate.
+[2026-02-18 21:53:28] login email error: SMTP Error: Could not authenticate.
+[2026-03-05 21:41:23] login email error: SMTP Error: data not accepted. SMTP server error: DATA command failed Detail: Daily user sending limit exceeded. For more information on Gmail
+sending limits go to
+ https://support.google.com/a/answer/166852 d2e1a72fcca58-82739d87e78sm25609188b3a.17 - gsmtp
+ SMTP code: 550 Additional SMTP info: 5.4.5
+[2026-03-10 20:02:22] login email error: SMTP Error: data not accepted. SMTP server error: DATA command failed Detail: Daily user sending limit exceeded. For more information on Gmail
+sending limits go to
+ https://support.google.com/a/answer/166852 d9443c01a7336-2aea445491bsm36458825ad.69 - gsmtp
+ SMTP code: 550 Additional SMTP info: 5.4.5
+[2026-03-10 20:02:32] login email error: SMTP Error: data not accepted. SMTP server error: DATA command failed Detail: Daily user sending limit exceeded. For more information on Gmail
+sending limits go to
+ https://support.google.com/a/answer/166852 d2e1a72fcca58-829a48676besm12710705b3a.40 - gsmtp
+ SMTP code: 550 Additional SMTP info: 5.4.5
+[2026-03-10 20:03:53] login email error: SMTP Error: data not accepted. SMTP server error: DATA command failed Detail: Daily user sending limit exceeded. For more information on Gmail
+sending limits go to
+ https://support.google.com/a/answer/166852 d9443c01a7336-2ae840b2d97sm159691455ad.84 - gsmtp
+ SMTP code: 550 Additional SMTP info: 5.4.5
+[2026-03-10 20:04:03] login email error: SMTP Error: data not accepted. SMTP server error: DATA command failed Detail: Daily user sending limit exceeded. For more information on Gmail
+sending limits go to
+ https://support.google.com/a/answer/166852 41be03b00d2f7-c739e0a7156sm12564415a12.2 - gsmtp
+ SMTP code: 550 Additional SMTP info: 5.4.5
+[2026-03-10 20:04:11] login email error: SMTP Error: data not accepted. SMTP server error: DATA command failed Detail: Daily user sending limit exceeded. For more information on Gmail
+sending limits go to
+ https://support.google.com/a/answer/166852 98e67ed59e1d1-359f06f945bsm2732675a91.5 - gsmtp
+ SMTP code: 550 Additional SMTP info: 5.4.5
+[2026-03-10 20:12:51] login email error: SMTP Error: data not accepted. SMTP server error: DATA command failed Detail: Daily user sending limit exceeded. For more information on Gmail
+sending limits go to
+ https://support.google.com/a/answer/166852 d9443c01a7336-2ae83fb516esm142647265ad.75 - gsmtp
+ SMTP code: 550 Additional SMTP info: 5.4.5

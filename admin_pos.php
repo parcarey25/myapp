@@ -36,14 +36,27 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             $staff_id = (int)$_SESSION['user_id']; // admin/staff id
 
-            $p = $conn->prepare(
-                "INSERT INTO payments (user_id, staff_id, amount, method, reference, months_added)
-                 VALUES (?,?,?,?,?,?)"
-            );
-            $p->bind_param('iisssi', $uid, $staff_id, $amount, $method, $reference, $months);
-            $p->execute();
-            $p->close();
+            $pay = $conn->prepare("
+                INSERT INTO payments (user_id, staff_id, amount, method, reference)
+                VALUES (?,?,?,?,?)
+            ");
 
+            // Make sure these variables exist above:
+            // $memberId, $staffId, $amount, $membershipType, $planLabel
+            $method    = 'rfid_wallet';
+            $reference = $membershipType . ' - ' . $planLabel;
+            $amountStr = sprintf('%.2f', (float)$amount);
+
+            $pay->bind_param(
+                  'iisss',     // user_id, staff_id = int, amount, method, reference = string
+                   $memberId,
+                  $staffId,
+                         $amountStr,
+                          $method,
+                         $reference
+            );
+            $pay->execute();
+            $pay->close();
             $base = $exp ? strtotime($exp) : time();
             if ($base < time()) {
                 $base = time();

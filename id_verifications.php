@@ -1,9 +1,15 @@
-<<<<<<< HEAD
+
 <?php
 // id_verifications.php — Staff/Admin review pending IDs
 session_start();
 if (!isset($_SESSION['user_id'])) { header('Location: login.php'); exit; }
-require __DIR__ . '/db.php';
+require_once __DIR__.'/send_mail.php';
+
+sendValidIdApprovedEmail(
+    $user['email'],
+    $user['full_name'] ?: $user['username'],
+    $user['id_number'] ?? ''
+);
 
 $role = strtolower($_SESSION['role'] ?? 'member');
 if (!in_array($role, ['staff','admin'], true)) {

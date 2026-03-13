@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 <?php
 // index.php — Landing page with larger hero, About, Vision & Mission, Gallery, and floating Login/Register panel
 session_start();
@@ -123,7 +123,46 @@ $isAuthed = isset($_SESSION['user_id']);
   .backdrop.show{ display:block; }
 
   footer{color:#8f8f8f; font-size:.9rem; text-align:center; padding:22px;}
+  .hero-carousel .carousel-item {
+      height: 420px;
+      min-height: 320px;
+      background-position: center;
+      background-size: cover;
+      position: relative;
+  }
+  .hero-carousel .overlay {
+      position:absolute;
+      inset:0;
+      background:linear-gradient(120deg,rgba(0,0,0,.75),rgba(179,0,0,.65));
+  }
+  .hero-carousel .slide-content{
+      position:absolute;
+      inset:0;
+      display:flex;
+      flex-direction:column;
+      align-items:flex-start;
+      justify-content:center;
+      padding:2.5rem 3rem;
+      color:#fff;
+  }
+  .hero-carousel h2{
+      font-weight:700;
+      font-size:2.1rem;
+      margin-bottom:.5rem;
+  }
+  .hero-carousel p{
+      max-width:480px;
+      opacity:.9;
+  }
+  .hero-carousel .btn-danger{
+      background:#b30000;
+      border:none;
+  }
+  .hero-carousel .btn-danger:hover{
+      background:#ff1a1a;
+  }
 </style>
+
 </head>
 <body>
 
@@ -159,6 +198,51 @@ $isAuthed = isset($_SESSION['user_id']);
     </div>
   </div>
 </header>
+<div id="heroCarousel" class="carousel slide hero-carousel mb-4" data-ride="carousel">
+  <ol class="carousel-indicators">
+    <li data-target="#heroCarousel" data-slide-to="0" class="active"></li>
+    <li data-target="#heroCarousel" data-slide-to="1"></li>
+    <li data-target="#heroCarousel" data-slide-to="2"></li>
+  </ol>
+
+  <div class="carousel-inner">
+    <!-- Slide 1 -->
+    <div class="carousel-item active" style="background-image:url('photo/bodybuilding.jpeg');">
+      <div class="overlay"></div>
+      <div class="slide-content">
+        <h2>Welcome to RJL Fitness</h2>
+ 
+      </div>
+    </div>
+
+    <!-- Slide 2 -->
+    <div class="carousel-item" style="background-image:url('photo/slide2.jpg');">
+      <div class="overlay"></div>
+      <div class="slide-content">
+        <h2>Bodybuilding • Zumba • Boxing • Muay Thai</h2>
+        <p>Pick a program that matches your goals. Our trainers are ready to guide you.</p>
+      </div>
+    </div>
+
+    <!-- Slide 3 -->
+    <div class="carousel-item" style="background-image:url('photo/slide3.jpg');">
+      <div class="overlay"></div>
+      <div class="slide-content">
+        <h2>Easy Membership Management</h2>
+        <p>Top up via RFID, extend memberships, and track your activity all in one system.</p>
+      </div>
+    </div>
+  </div>
+
+  <a class="carousel-control-prev" href="#heroCarousel" role="button" data-slide="prev">
+    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+    <span class="sr-only">Previous</span>
+  </a>
+  <a class="carousel-control-next" href="#heroCarousel" role="button" data-slide="next">
+    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+    <span class="sr-only">Next</span>
+  </a>
+</div>
 
 <!-- ABOUT -->
 <section class="section" id="about">
@@ -354,6 +438,9 @@ tabs.forEach(b=>{
   });
 });
 </script>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+
 </body>
 
 </html>

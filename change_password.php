@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 <?php
 // change_password.php — verifies current password, updates to a new one (secure)
 session_start();

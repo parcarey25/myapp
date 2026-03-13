@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 <?php
 // test.php — PHPMailer tester (no LOGO_PATH usage)
 

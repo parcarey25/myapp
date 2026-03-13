@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 <?php
 require __DIR__.'/admin_guard.php';
 

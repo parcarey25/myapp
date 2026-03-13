@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 <?php
 // upload_avatar.php — change profile picture (JPG/PNG/GIF/WEBP ≤ 2MB)
 session_start();

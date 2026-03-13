@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 <?php
 // upload_id.php — Member/Trainer upload their Valid ID for verification
 session_start();

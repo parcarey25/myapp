@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 <?php
 // facilities_edit.php — edit a facility + upload image (staff/admin only)
 session_start();

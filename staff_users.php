@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 <?php
 require __DIR__.'/auth.php';
 if (!in_array($_SESSION['role'] ?? 'member', ['staff','admin'], true)) { http_response_code(403); die('Forbidden'); }

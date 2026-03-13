@@ -1,60 +1,161 @@
-<<<<<<< HEAD
-<?php
-// facilities.php — POST-to-self (then forwards POST to schedule.php)
-// Uses RADIO BUTTONS for time slots (reliable clicks), overlay to close, no hover rotation.
+<?php  
+// facilities.php — Simple booking: date + time slot + trainer + name/email/notes.
+// Clicking a card opens its booking panel, same design, red/black theme.
 
 session_start();
 if (!isset($_SESSION['user_id'])) { header('Location: login.php'); exit; }
 require __DIR__.'/db.php';
 
-/* ---------- Forward POST to schedule.php ---------- */
+$role  = strtolower($_SESSION['role'] ?? 'member');
+$userId = (int)($_SESSION['user_id'] ?? 0);
+
+/* ---------- Forward POST to schedules.php ---------- */
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['facility_slug'])) {
-  require __DIR__ . '/schedules.php';
-  exit;
+    require __DIR__ . '/schedules.php';
+    exit;
 }
 /* -------------------------------------------------- */
 
-$role = strtolower($_SESSION['role'] ?? 'member');
-
+// Small helper like you used elsewhere
 function has_column(mysqli $conn, string $table, string $column): bool {
-  $sql = "SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS
-          WHERE TABLE_SCHEMA = DATABASE() AND TABLE_NAME = ? AND COLUMN_NAME = ? LIMIT 1";
-  $st = $conn->prepare($sql);
-  $st->bind_param('ss', $table, $column);
-  $st->execute();
-  $res = $st->get_result();
-  $ok = $res && $res->num_rows > 0;
-  if ($res) $res->free();
-  $st->close();
-  return $ok;
+    $sql = "SELECT 1 FROM INFORMATION_SCHEMA.COLUMNS
+            WHERE TABLE_SCHEMA = DATABASE()
+              AND TABLE_NAME = ?
+              AND COLUMN_NAME = ?
+            LIMIT 1";
+    $st = $conn->prepare($sql);
+    if (!$st) return false;
+    $st->bind_param('ss', $table, $column);
+    $st->execute();
+    $res = $st->get_result();
+    $ok = $res && $res->num_rows > 0;
+    if ($res) $res->free();
+    $st->close();
+    return $ok;
 }
 
+/* ----- Read membership_type + trainer_sessions_remaining (if columns exist) ----- */
+$membershipType   = '';
+$sessionsLeft     = 0;
+$membershipInfo   = 'No membership set';
+
+if ($userId > 0) {
+    $hasMemTypeCol = has_column($conn, 'users', 'membership_type');
+    $hasSessCol    = has_column($conn, 'users', 'trainer_sessions_remaining');
+
+    if ($hasMemTypeCol || $hasSessCol) {
+        $cols = [];
+        if ($hasMemTypeCol) $cols[] = 'membership_type';
+        if ($hasSessCol)    $cols[] = 'trainer_sessions_remaining';
+        $sqlU = "SELECT ".implode(',', $cols)." FROM users WHERE id=? LIMIT 1";
+
+        if ($st = $conn->prepare($sqlU)) {
+            $st->bind_param('i', $userId);
+            $st->execute();
+            if ($res = $st->get_result()) {
+                if ($rowU = $res->fetch_assoc()) {
+                    if ($hasMemTypeCol) {
+                        $membershipType = strtolower(trim($rowU['membership_type'] ?? ''));
+                    }
+                    if ($hasSessCol) {
+                        $sessionsLeft = (int)($rowU['trainer_sessions_remaining'] ?? 0);
+                    }
+                }
+                $res->free();
+            }
+            $st->close();
+        }
+    }
+
+    // Friendly label just for display at the top (does not affect logic)
+    $labelMap = [
+        'bodybuilding_with_trainer'    => 'Bodybuilding (with trainer)',
+        'bodybuilding_without_trainer' => 'Bodybuilding (without trainer)',
+        'zumba'                        => 'Zumba',
+        'boxing_with_trainer'          => 'Boxing (with trainer)',
+        'boxing_without_trainer'       => 'Boxing (without trainer)',
+        'muaythai_with_trainer'        => 'Muay Thai (with trainer)',
+        'muaythai_without_trainer'     => 'Muay Thai (without trainer)',
+    ];
+    if ($membershipType) {
+        $membershipInfo = $labelMap[$membershipType] ?? $membershipType;
+        if (in_array($membershipType, ['boxing_with_trainer','muaythai_with_trainer'], true)) {
+            $membershipInfo .= " • Sessions left: ".$sessionsLeft;
+        }
+    }
+}
+
+/* ----- Load facilities (respect is_active / visible_to if present) ----- */
 $has_is_active  = has_column($conn, 'facilities', 'is_active');
 $has_visible_to = has_column($conn, 'facilities', 'visible_to');
 
 $rows = [];
 if (in_array($role, ['staff','admin'], true)) {
-  $sql = "SELECT id,name,slug," . ($has_visible_to ? "visible_to," : "'both' AS visible_to,") .
-         "description,image FROM facilities" . ($has_is_active ? " WHERE is_active=1" : "") .
-         " ORDER BY name ASC";
-  if ($res = $conn->query($sql)) { $rows = $res->fetch_all(MYSQLI_ASSOC); $res->free(); }
+    $sql = "SELECT id,name,slug," .
+           ($has_visible_to ? "visible_to," : "'both' AS visible_to,") .
+           "description,image
+           FROM facilities" .
+           ($has_is_active ? " WHERE is_active=1" : "") .
+           " ORDER BY name ASC";
+    if ($res = $conn->query($sql)) {
+        $rows = $res->fetch_all(MYSQLI_ASSOC);
+        $res->free();
+    }
 } else {
-  if ($has_visible_to) {
-    $sql = "SELECT id,name,slug,visible_to,description,image
-            FROM facilities
-            WHERE " . ($has_is_active ? "is_active=1 AND " : "") . "(LOWER(visible_to)='both' OR LOWER(visible_to)=?)
-            ORDER BY name ASC";
-    $st = $conn->prepare($sql);
-    $st->bind_param('s', $role);
-    $st->execute();
-    if ($res = $st->get_result()) { $rows = $res->fetch_all(MYSQLI_ASSOC); $res->free(); }
-    $st->close();
-  } else {
-    $sql = "SELECT id,name,slug,'both' AS visible_to,description,image
-            FROM facilities " . ($has_is_active ? "WHERE is_active=1 " : "") . "ORDER BY name ASC";
-    if ($res = $conn->query($sql)) { $rows = $res->fetch_all(MYSQLI_ASSOC); $res->free(); }
-  }
+    if ($has_visible_to) {
+        $sql = "SELECT id,name,slug,visible_to,description,image
+                FROM facilities
+                WHERE " . ($has_is_active ? "is_active=1 AND " : "") . "
+                      (LOWER(visible_to)='both' OR LOWER(visible_to)=?)
+                ORDER BY name ASC";
+        $st = $conn->prepare($sql);
+        $st->bind_param('s', $role);
+        $st->execute();
+        if ($res = $st->get_result()) {
+            $rows = $res->fetch_all(MYSQLI_ASSOC);
+            $res->free();
+        }
+        $st->close();
+    } else {
+        $sql = "SELECT id,name,slug,'both' AS visible_to,description,image
+                FROM facilities " . ($has_is_active ? "WHERE is_active=1 " : "") . "
+                ORDER BY name ASC";
+        if ($res = $conn->query($sql)) {
+            $rows = $res->fetch_all(MYSQLI_ASSOC);
+            $res->free();
+        }
+    }
 }
+
+/* ----- Load trainers for the dropdown ----- */
+$trainers = [];
+if ($tr = $conn->query("
+    SELECT id, full_name, username
+    FROM users
+    WHERE LOWER(role)='trainer' AND status='active'
+    ORDER BY full_name, username
+")) {
+    while ($r = $tr->fetch_assoc()) {
+        $trainers[] = $r;
+    }
+    $tr->free();
+}
+
+// Time slots used for ALL facilities
+$TIME_SLOTS = [
+    '08:00-10:00',
+    '10:00-12:00',
+    '12:00-14:00',
+    '16:00-18:00',
+    '18:00-20:00',
+    '20:00-22:00',
+];
+
+// Default date (today)
+$today = date('Y-m-d');
+
+// Helper to escape
+function h($v){ return htmlspecialchars((string)$v, ENT_QUOTES, 'UTF-8'); }
 ?>
 <!doctype html>
 <html lang="en">
@@ -97,25 +198,37 @@ if (in_array($role, ['staff','admin'], true)) {
   .btn-danger{background:var(--brand);border:none}
   .btn-danger:hover{background:#ff1a1a}
 
-  .facility-card-wrap.active .facility-card{ transform: scale(1.12); border-radius:14px; }
+  .facility-card-wrap.active .facility-card{ transform: scale(1.06); border-radius:14px; }
   .card-main{ display:block; }
   .facility-card-wrap.active .card-main{ display:none; }
 
-  /* expanded panel (40/60) */
+  .facility-card.locked{
+    opacity:.6;
+  }
+  .facility-card.locked::after{
+    content:"Not allowed for your membership";
+    position:absolute;
+    left:0; right:0; bottom:0;
+    padding:4px 8px;
+    background:rgba(179,0,0,.9);
+    font-size:.8rem;
+    text-align:center;
+  }
+
   .schedule{
     background:#141414;border-top:1px dashed #303030;
     max-height:0; overflow:hidden;
     transition:max-height .40s ease, padding .28s ease;
     padding:0 16px;
   }
-  .facility-card-wrap.active .schedule{ max-height:820px; padding:22px 22px; }
+  .facility-card-wrap.active .schedule{ max-height:900px; padding:22px 22px; }
 
   .sched-grid{ display:grid; grid-template-columns: 40% 60%; gap:16px; }
   @media (max-width: 992px){ .sched-grid{ grid-template-columns: 1fr; } }
 
   .sched-visual{
     min-height:380px;
-    background:#0f0f0f url('photo/man_left.jpg') center/cover no-repeat; /* change path if needed */
+    background:#0f0f0f url('photo/man_left.jpg') center/cover no-repeat;
     border:1px solid #272727; border-radius:12px; position:relative;
   }
   .sched-visual::after{
@@ -128,24 +241,13 @@ if (in_array($role, ['staff','admin'], true)) {
   .section-title{ font-weight:700; margin-bottom:8px; }
   .muted{ color:#9aa0a6; }
 
-  /* radio-time list styling */
-  .slot-list{ display:flex; flex-wrap:wrap; gap:8px; }
-  .slot-item{ position:relative; }
-  .slot-radio{ position:absolute; opacity:0; pointer-events:none; }
-  .slot-label{
-    display:inline-flex; align-items:center; gap:6px;
-    padding:6px 10px; border:1px solid #333; border-radius:999px;
-    background:#1c1c1c; font-size:.9rem; cursor:pointer; user-select:none;
+  .form-control, .custom-select{
+      background:#121212;border:1px solid #2a2a2a;color:#eee;
   }
-  .slot-radio:checked + .slot-label{ border-color:#ff4444; background:#2a1a1a; }
-  .slot-cap{ color:#9aa0a6; font-size:.8rem; }
 
-  .form-control, .custom-select{ background:#121212;border:1px solid #2a2a2a;color:#eee; }
-
-  /* overlay to close when clicking outside */
   #panelOverlay{
     position:fixed; inset:0; background:rgba(0,0,0,.45);
-    z-index: 1500; /* below active card (2000) */
+    z-index: 1500;
   }
 </style>
 </head>
@@ -161,14 +263,20 @@ if (in_array($role, ['staff','admin'], true)) {
 <div class="container py-4">
   <div class="d-flex justify-content-between align-items-center mb-3">
     <h3>Facilities</h3>
-    <small class="text-muted">Visible to: <?= htmlspecialchars($role) ?></small>
+    <small class="text-muted">
+      Visible to: <?= h($role) ?>
+      <?php if ($role === 'member'): ?>
+        · Membership: <?= h($membershipInfo) ?>
+      <?php endif; ?>
+    </small>
   </div>
 
   <div class="row cards" id="cards">
     <?php if (!$rows): ?>
       <div class="col-12"><div class="alert alert-secondary">No facilities available.</div></div>
     <?php else: foreach ($rows as $f):
-      // Safe slug fallback
+
+      // slug cleanup / fallback
       $rawSlug = trim($f['slug'] ?? '');
       if ($rawSlug === '') {
         $nm = trim($f['name'] ?? '');
@@ -181,78 +289,147 @@ if (in_array($role, ['staff','admin'], true)) {
       } else {
         $slug = $rawSlug;
       }
-      $vis = isset($f['visible_to']) ? ($f['visible_to']==='both' ? 'Member & Trainer' : ucfirst($f['visible_to'])) : 'Member & Trainer';
+      $slugKey = strtolower($slug);
+      $slugKeyNorm = str_replace('_','-',$slugKey); // normalize muay_thai vs muay-thai
+
+      $vis = isset($f['visible_to'])
+        ? ($f['visible_to']==='both' ? 'Member & Trainer' : ucfirst($f['visible_to']))
+        : 'Member & Trainer';
+
+      /* ---------- Membership-based access control ---------- */
+      $allowed    = true;
+      $lockReason = '';
+
+      if ($role === 'member') {
+          $isBodybuilding = ($slugKeyNorm === 'bodybuilding');
+          $isZumba        = ($slugKeyNorm === 'zumba');
+          $isBoxing       = ($slugKeyNorm === 'boxing');
+          $isMuayThai     = ($slugKeyNorm === 'muay-thai');
+
+          if ($membershipType === '' || $membershipType === null) {
+              $allowed    = false;
+              $lockReason = 'You do not have an active membership that can book facilities.';
+          } elseif ($membershipType === 'bodybuilding_with_trainer') {
+              if (!$isBodybuilding) {
+                  $allowed    = false;
+                  $lockReason = 'Your membership only allows Bodybuilding facility.';
+              }
+          } elseif ($membershipType === 'bodybuilding_without_trainer') {
+              $allowed    = false;
+              $lockReason = 'Your Bodybuilding (without trainer) membership cannot book any facilities.';
+          } elseif ($membershipType === 'zumba') {
+              if (!$isZumba) {
+                  $allowed    = false;
+                  $lockReason = 'Your Zumba membership can book the Zumba facility only.';
+              }
+          } elseif ($membershipType === 'boxing_with_trainer' || $membershipType === 'muaythai_with_trainer') {
+              // All 4 facilities visible, but Boxing/MuayThai need sessions
+              if (($isBoxing || $isMuayThai) && $sessionsLeft <= 0) {
+                  $allowed    = false;
+                  $lockReason = 'You have no trainer sessions left for Boxing/Muay Thai.';
+              }
+          } elseif ($membershipType === 'boxing_without_trainer' || $membershipType === 'muaythai_without_trainer') {
+              // As per your request: any *without trainer* membership cannot open facilities
+              $allowed    = false;
+              $lockReason = 'Your current membership (without trainer) cannot book any facilities.';
+          }
+      }
+
+      $lockAttrs   = '';
+      $cardClasses = 'facility-card';
+      if (!$allowed && $role === 'member') {
+          $lockAttrs   = ' data-locked="1" data-lock-message="'.h($lockReason).'"';
+          $cardClasses .= ' locked';
+      }
     ?>
       <div class="facility-col col-md-6 col-lg-4 mb-4" style="overflow:visible">
-        <div class="facility-card-wrap" data-slug="<?= htmlspecialchars($slug) ?>" data-name="<?= htmlspecialchars($f['name']) ?>">
-          <div class="facility-card">
+        <div class="facility-card-wrap" data-slug="<?= h($slug) ?>" data-name="<?= h($f['name']) ?>"<?= $lockAttrs ?>>
+          <div class="<?= $cardClasses ?>">
             <!-- Teaser -->
             <div class="card-main">
-              <img class="img-top" src="<?= htmlspecialchars($f['image'] ?: 'photo/logo.jpg') ?>" alt="">
+              <img class="img-top" src="<?= h($f['image'] ?: 'photo/logo.jpg') ?>" alt="">
               <div class="p-3">
                 <div class="d-flex justify-content-between align-items-center">
-                  <h5 class="mb-1"><?= htmlspecialchars($f['name']) ?></h5>
-                  <span class="badge badge-rol"><?= $vis ?></span>
+                  <h5 class="mb-1"><?= h($f['name']) ?></h5>
+                  <span class="badge badge-rol"><?= h($vis) ?></span>
                 </div>
-                <p class="mb-0 text-muted"><?= htmlspecialchars($f['description'] ?: '—') ?></p>
+                <p class="mb-0 text-muted"><?= h($f['description'] ?: '—') ?></p>
               </div>
             </div>
 
-            <!-- Expanded -->
+            <!-- Expanded booking panel -->
             <div class="schedule">
               <div class="sched-grid">
                 <div class="sched-visual"></div>
 
                 <div>
                   <div class="sched-section mb-3">
-                    <div class="section-title">Scheduling</div>
-                    <div class="form-row">
-                      <div class="form-group col-md-6">
-                        <label>Date</label>
-                        <input type="date" class="form-control sched-date">
-                      </div>
-                      <div class="form-group col-md-6">
-                        <label>Coach/Room (optional)</label>
-                        <select class="custom-select sched-coach">
-                          <option value="">Any</option>
-                          <option>Coach Jay</option>
-                          <option>Coach Ana</option>
-                          <option>Kru Petch</option>
-                          <option>Floor Trainers</option>
-                        </select>
-                      </div>
-                    </div>
-                    <div class="mt-1">
-                      <div class="font-weight-bold">Available slots</div>
-                      <div class="slots mt-2"><span class="muted">Choose a date to see slots.</span></div>
-                    </div>
+                    <div class="section-title">Schedule a Session</div>
+                    <p class="muted mb-2">
+                      Pick a <strong>date</strong>, <strong>time slot</strong> and <strong>trainer</strong>,
+                      then fill in your info and book. The request will be
+                      <span class="text-warning">PENDING</span> until the trainer approves.
+                    </p>
                   </div>
 
                   <div class="sched-section">
-                    <div class="section-title">Booking</div>
-                    <form class="book-form" action="facilities.php" method="post">
-                      <input type="hidden" name="facility_slug" class="bf-slug" value="<?= htmlspecialchars($slug) ?>">
-                      <input type="hidden" name="facility_name" class="bf-name" value="<?= htmlspecialchars($f['name']) ?>">
-                      <input type="hidden" name="date" class="bf-date" value="">
-                      <input type="hidden" name="time" class="bf-time" value="">
+                    <div class="section-title">Booking Details</div>
+                    <form class="book-form" action="facilities.php" method="post" autocomplete="off">
+                      <input type="hidden" name="facility_slug" value="<?= h($slug) ?>">
+                      <input type="hidden" name="facility_name" value="<?= h($f['name']) ?>">
+
+                      <div class="form-row">
+                        <div class="form-group col-md-6">
+                          <label>Date</label>
+                          <input type="date" name="date" class="form-control js-book-date"
+                                 value="<?= h($today) ?>" required>
+                        </div>
+                        <div class="form-group col-md-6">
+                          <label>Time slot</label>
+                          <select name="time" class="custom-select js-book-time" required>
+                            <option value="">Choose time</option>
+                            <?php foreach ($TIME_SLOTS as $slot): ?>
+                              <option value="<?= h($slot) ?>"><?= h($slot) ?></option>
+                            <?php endforeach; ?>
+                          </select>
+                          <small class="muted d-block mt-1 js-time-hint"></small>
+                        </div>
+                      </div>
+
+                      <div class="form-group">
+                        <label>Trainer</label>
+                        <select name="trainer_id" class="custom-select js-book-trainer">
+                          <option value="0">(Any available trainer)</option>
+                          <?php foreach ($trainers as $t):
+                              $label = $t['full_name'] ?: $t['username'];
+                          ?>
+                            <option value="<?= (int)$t['id'] ?>"><?= h($label) ?></option>
+                          <?php endforeach; ?>
+                        </select>
+                        <small class="muted d-block mt-1 js-trainer-hint"></small>
+                      </div>
+
                       <div class="form-row">
                         <div class="form-group col-md-6">
                           <label>Full name</label>
                           <input name="full_name" class="form-control" required
-                                 value="<?= htmlspecialchars($_SESSION['full_name'] ?? $_SESSION['username'] ?? '') ?>">
+                                 value="<?= h($_SESSION['full_name'] ?? $_SESSION['username'] ?? '') ?>">
                         </div>
-                        <div class="form-group col-md-6">
-                          <label>Email</label>
-                          <input type="email" name="email" class="form-control" required
-                                 value="<?= htmlspecialchars($_SESSION['email'] ?? '') ?>">
-                        </div>
+                      
                       </div>
+
                       <div class="form-group">
                         <label>Notes (optional)</label>
-                        <textarea name="notes" class="form-control" rows="2" placeholder="Anything we should know?"></textarea>
+                        <textarea name="notes" class="form-control" rows="2"
+                                  placeholder="Anything we should know?"></textarea>
                       </div>
-                      <button class="btn btn-danger btn-block book-btn" type="submit" disabled>Book Now</button>
-                      <small class="muted d-block mt-2">After submit, this page forwards your POST to schedule.php.</small>
+
+                      <button class="btn btn-danger btn-block" type="submit">
+                        Book Now (Pending Approval)
+                      </button>
+                      <small class="muted d-block mt-2">
+                        After submit, this POST is forwarded to <code>schedules.php</code>.
+                      </small>
                     </form>
                   </div>
                 </div>
@@ -263,6 +440,7 @@ if (in_array($role, ['staff','admin'], true)) {
                 <a class="btn btn-danger btn-sm" href="schedules.php?facility=<?= urlencode($slug) ?>">Full Schedule</a>
               </div>
             </div>
+
           </div>
         </div>
       </div>
@@ -270,183 +448,213 @@ if (in_array($role, ['staff','admin'], true)) {
   </div>
 </div>
 
-<!-- Overlay used to close the expanded panel -->
 <div id="panelOverlay" hidden></div>
 
 <script>
-// ===== Weekly demo rules =====
-const WEEKLY_RULES = {
-  boxing:      { 1:['06:00','18:00'], 3:['18:00'], 6:['09:00'] },
-  'muay-thai': { 2:['19:00'], 4:['19:00'] },
-  zumba:       { 1:['17:30'], 5:['17:30'] },
-  bodybuilding:{ 0:['06:00','12:00','18:00'],1:['06:00','12:00','18:00'],2:['06:00','12:00','18:00'],
-                 3:['06:00','12:00','18:00'],4:['06:00','12:00','18:00'],5:['06:00','12:00','18:00'],6:['06:00','12:00','18:00'] }
-};
-const SLOT_CAPACITY = 12;
-
-const grid = document.getElementById('cards');
+// Simple open/close logic for the cards
+const grid    = document.getElementById('cards');
+const cards   = document.querySelectorAll('.facility-card-wrap');
+const cols    = document.querySelectorAll('.facility-col');
 const overlay = document.getElementById('panelOverlay');
-
-function openPanel(wrap){
-  const col = wrap.closest('.facility-col');
-  grid.querySelectorAll('.facility-card-wrap.active').forEach(w => w.classList.remove('active'));
-  grid.querySelectorAll('.facility-col.expanded').forEach(c => c.classList.remove('expanded'));
-  grid.classList.add('has-active');
-  wrap.classList.add('active');
-  if (col) col.classList.add('expanded');
-  if (overlay) overlay.hidden = false;
-
-  const dateInput = wrap.querySelector('.sched-date');
-  if (dateInput) {
-    const t = new Date();
-    const yyyy = t.getFullYear();
-    const mm = String(t.getMonth()+1).padStart(2,'0');
-    const dd = String(t.getDate()).padStart(2,'0');
-    dateInput.value = `${yyyy}-${mm}-${dd}`;
-    renderSlotsFor(wrap);
-  }
-}
 
 function closeAllPanels(){
   grid.classList.remove('has-active');
-  grid.querySelectorAll('.facility-card-wrap.active').forEach(w => w.classList.remove('active'));
-  grid.querySelectorAll('.facility-col.expanded').forEach(c => c.classList.remove('expanded'));
+  cards.forEach(w => w.classList.remove('active'));
+  cols.forEach(c => c.classList.remove('expanded'));
   if (overlay) overlay.hidden = true;
 }
 
-// Open panel (ignore clicks on controls)
-grid.querySelectorAll('.facility-card-wrap').forEach(wrap => {
+cards.forEach(wrap => {
   wrap.addEventListener('click', e => {
-    const interactive = e.target.closest('a, form, .schedule, .sched-section, input, select, textarea, button, label');
+    const interactive = e.target.closest('a,button,input,textarea,select,label,form');
     if (interactive) return;
-    if (wrap.classList.contains('active')) return;
-    openPanel(wrap);
+
+    const locked = wrap.dataset.locked === '1';
+    if (locked) {
+      const msg = wrap.dataset.lockMessage || 'You cannot open this facility with your current membership.';
+      alert(msg);
+      return;
+    }
+
+    const col = wrap.closest('.facility-col');
+    closeAllPanels();
+    grid.classList.add('has-active');
+    wrap.classList.add('active');
+    if (col) col.classList.add('expanded');
+    if (overlay) overlay.hidden = false;
   });
 });
 
-// Close via overlay only
-if (overlay) overlay.addEventListener('click', closeAllPanels);
+if (overlay) {
+  overlay.addEventListener('click', () => {
+    closeAllPanels();
+  });
+}
 
-// Re-render on date/coach change
-grid.addEventListener('change', e => {
-  if (e.target.classList.contains('sched-date') || e.target.classList.contains('sched-coach')) {
-    const wrap = e.target.closest('.facility-card-wrap');
-    renderSlotsFor(wrap);
-  }
-});
-
-// Stop bubbling from interactive controls (keep panel open)
-document.addEventListener('click', (e) => {
-  if (e.target.closest('.facility-card-wrap .schedule')
-      || e.target.closest('.facility-card-wrap form')
-      || e.target.closest('.facility-card-wrap .sched-section')
-      || e.target.closest('.facility-card-wrap input')
-      || e.target.closest('.facility-card-wrap select')
-      || e.target.closest('.facility-card-wrap textarea')
-      || e.target.closest('.facility-card-wrap button')
-      || e.target.closest('.facility-card-wrap label')) {
+// Keep clicks inside the schedule/forms from bubbling up and closing
+document.addEventListener('click', e => {
+  if (e.target.closest('.facility-card-wrap .schedule')) {
     e.stopPropagation();
   }
 }, true);
-
-// Build *radio* slots for a wrap
-function renderSlotsFor(wrap){
-  const slug = (wrap.dataset.slug || '').toLowerCase();
-  const dateInput = wrap.querySelector('.sched-date');
-  const list = wrap.querySelector('.slots');
-  const bookBtn = wrap.querySelector('.book-btn');
-  const bfDate  = wrap.querySelector('.bf-date');
-  const bfTime  = wrap.querySelector('.bf-time');
-
-  if (bfDate) bfDate.value = '';
-  if (bfTime) bfTime.value = '';
-  if (bookBtn) bookBtn.disabled = true;
-
-  if (!dateInput || !list) return;
-  const d = new Date(dateInput.value + 'T00:00:00');
-  if (isNaN(d.getTime())) { list.innerHTML = '<span class="muted">Invalid date.</span>'; return; }
-
-  const day  = d.getDay(); // 0..6
-  const rule = (typeof WEEKLY_RULES !== 'undefined' ? WEEKLY_RULES[slug] : {}) || {};
-  const times= rule[day] || [];
-
-  if (!times.length) { list.innerHTML = '<span class="muted">No sessions on this day. Pick another date.</span>'; return; }
-
-  // radio group name must be unique per card
-  const group = `slot-${slug}`;
-  let html = '<div class="slot-list">';
-  times.forEach((t, i) => {
-    const id = `${group}-${i}`;
-    const seats = Math.max(0, SLOT_CAPACITY - Math.floor(Math.random()*5));
-    html += `
-      <div class="slot-item">
-        <input class="slot-radio" type="radio" name="${group}" id="${id}" value="${t}">
-        <label class="slot-label" for="${id}">
-          <span>${t}</span>
-          <span class="slot-cap">(${seats} seats)</span>
-        </label>
-      </div>`;
-  });
-  html += '</div>';
-  list.innerHTML = html;
-}
-
-// Enable button + fill hidden fields when a radio is selected
-grid.addEventListener('change', function(e){
-  if (!e.target.classList.contains('slot-radio')) return;
-  const radio  = e.target;
-  const wrap   = radio.closest('.facility-card-wrap');
-  const dateIn = wrap.querySelector('.sched-date');
-  const bfDate = wrap.querySelector('.bf-date');
-  const bfTime = wrap.querySelector('.bf-time');
-  const bookBtn= wrap.querySelector('.book-btn');
-
-  if (bfDate && dateIn) bfDate.value = dateIn.value;
-  if (bfTime) bfTime.value = radio.value || '';
-  if (bookBtn) bookBtn.disabled = !(bfDate && bfDate.value && bfTime && bfTime.value);
-}, true);
-
-// Submit guard per form
-document.querySelectorAll('.facility-card-wrap').forEach(wrap => {
-  const form   = wrap.querySelector('form.book-form');
-  if (!form) return;
-
-  const bookBtn= wrap.querySelector('.book-btn');
-  const bfDate = wrap.querySelector('.bf-date');
-  const bfTime = wrap.querySelector('.bf-time');
-
-  form.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter' && (!bfDate.value || !bfTime.value)) e.preventDefault();
-  });
-
-  form.addEventListener('submit', (e) => {
-    const slug = (wrap.dataset.slug || '').trim();
-    const name = (wrap.dataset.name || '').trim();
-    const hSlug = form.querySelector('.bf-slug');
-    const hName = form.querySelector('.bf-name');
-    if (hSlug && !hSlug.value) hSlug.value = slug;
-    if (hName && !hName.value) hName.value = name;
-
-    if (!slug || !name || !bfDate.value || !bfTime.value) {
-      e.preventDefault();
-      inlineWarn(form, !slug || !name ? 'Missing facility information.' :
-                      (!bfDate.value || !bfTime.value ? 'Please choose a date and time.' : 'Please complete the form.'));
-      return false;
-    }
-    return true;
-  });
-});
-
-function inlineWarn(form, msg){
-  let w = form.querySelector('.inline-warn');
-  if (!w) {
-    w = document.createElement('div');
-    w.className = 'inline-warn';
-    w.style.color = '#ff9b9b';
-    w.style.marginTop = '8px';
-    form.appendChild(w);
-  }
-  w.textContent = '⚠ ' + msg;
-}
 </script>
+
+<!-- ✅ Dynamic trainer/slot availability -->
+<script>
+(() => {
+  const API = 'ajax_trainer_availability.php';
+  const ALL_SLOTS = <?php echo json_encode($TIME_SLOTS, JSON_UNESCAPED_SLASHES); ?>;
+
+  function qs(el, sel){ return el.querySelector(sel); }
+  function setHint(el, txt){ if (el) el.textContent = txt || ''; }
+
+  async function fetchJSON(url){
+    const res = await fetch(url, { credentials: 'same-origin' });
+    return await res.json();
+  }
+
+  function esc(str){
+    return String(str ?? '')
+      .replaceAll('&','&amp;').replaceAll('<','&lt;')
+      .replaceAll('>','&gt;').replaceAll('"','&quot;')
+      .replaceAll("'","&#039;");
+  }
+
+  function fillTrainerOptions(select, trainers, keepValue){
+    if (!select) return;
+    const current = keepValue ?? select.value;
+    select.innerHTML = '';
+    select.insertAdjacentHTML('beforeend', `<option value="0">(Any available trainer)</option>`);
+    (trainers || []).forEach(t => {
+      select.insertAdjacentHTML('beforeend', `<option value="${t.id}">${esc(t.name)}</option>`);
+    });
+
+    const still = Array.from(select.options).some(o => o.value === String(current));
+    select.value = still ? String(current) : '0';
+  }
+
+  function fillSlotOptions(select, slots, keepValue){
+    if (!select) return;
+    const current = keepValue ?? select.value;
+    select.innerHTML = `<option value="">Choose time</option>`;
+    (slots || []).forEach(s => {
+      select.insertAdjacentHTML('beforeend', `<option value="${esc(s)}">${esc(s)}</option>`);
+    });
+
+    const still = Array.from(select.options).some(o => o.value === String(current));
+    select.value = still ? String(current) : '';
+  }
+
+  async function updateTrainers(form){
+    const dateEl    = qs(form, '.js-book-date');
+    const timeEl    = qs(form, '.js-book-time');
+    const trainerEl = qs(form, '.js-book-trainer');
+
+    const timeHint    = qs(form, '.js-time-hint');
+    const trainerHint = qs(form, '.js-trainer-hint');
+
+    const date = dateEl?.value || '';
+    const slot = timeEl?.value || '';
+
+    if (!date || !slot){
+      setHint(trainerHint, 'Pick date and time slot to see available trainers.');
+      return;
+    }
+
+    setHint(trainerHint, 'Checking available trainers...');
+    const url = `${API}?action=trainers&date=${encodeURIComponent(date)}&time=${encodeURIComponent(slot)}`;
+    const data = await fetchJSON(url);
+
+    if (!data.ok){
+      setHint(trainerHint, data.error || 'Error loading trainers.');
+      return;
+    }
+
+    fillTrainerOptions(trainerEl, data.trainers, trainerEl.value);
+
+    if ((data.trainers || []).length === 0){
+      setHint(trainerHint, 'No trainers available for this slot.');
+    } else {
+      setHint(trainerHint, `${data.trainers.length} trainer(s) available for this slot.`);
+    }
+
+    setHint(timeHint, '');
+  }
+
+  async function updateSlots(form){
+    const dateEl    = qs(form, '.js-book-date');
+    const timeEl    = qs(form, '.js-book-time');
+    const trainerEl = qs(form, '.js-book-trainer');
+
+    const timeHint    = qs(form, '.js-time-hint');
+    const trainerHint = qs(form, '.js-trainer-hint');
+
+    const date = dateEl?.value || '';
+    const trainerId = parseInt(trainerEl?.value || '0', 10);
+
+    if (!date){
+      setHint(timeHint, 'Pick date to see available slots.');
+      return;
+    }
+
+    if (!trainerId){
+      // Any trainer => restore all slots
+      const prev = timeEl.value;
+      fillSlotOptions(timeEl, ALL_SLOTS, prev);
+      setHint(timeHint, '');
+      setHint(trainerHint, 'Pick a time slot to see available trainers.');
+      // After restoring slots, if time is selected, update trainers
+      if (timeEl.value) await updateTrainers(form);
+      return;
+    }
+
+    setHint(timeHint, 'Checking available slots for this trainer...');
+    const url = `${API}?action=slots&date=${encodeURIComponent(date)}&trainer_id=${trainerId}`;
+    const data = await fetchJSON(url);
+
+    if (!data.ok){
+      setHint(timeHint, data.error || 'Error loading slots.');
+      return;
+    }
+
+    const prev = timeEl.value;
+    fillSlotOptions(timeEl, data.slots, prev);
+
+    if ((data.slots || []).length === 0){
+      setHint(timeHint, 'This trainer has no available slots for this day.');
+    } else {
+      setHint(timeHint, `${data.slots.length} slot(s) available for this trainer.`);
+    }
+
+    // If slot chosen, refresh trainers (optional)
+    if (timeEl.value) await updateTrainers(form);
+    else setHint(trainerHint, 'Pick a time slot to see trainers available.');
+  }
+
+  // attach listeners to every booking form
+  document.querySelectorAll('form.book-form').forEach(form => {
+    const dateEl    = qs(form, '.js-book-date');
+    const timeEl    = qs(form, '.js-book-time');
+    const trainerEl = qs(form, '.js-book-trainer');
+
+    const trainerHint = qs(form, '.js-trainer-hint');
+    if (trainerHint) trainerHint.textContent = 'Pick a time slot to see trainers available.';
+
+    dateEl?.addEventListener('change', async () => {
+      if (parseInt(trainerEl.value || '0', 10) > 0) await updateSlots(form);
+      else await updateTrainers(form);
+    });
+
+    timeEl?.addEventListener('change', async () => {
+      await updateTrainers(form);
+    });
+
+    trainerEl?.addEventListener('change', async () => {
+      await updateSlots(form);
+    });
+  });
+})();
+</script>
+
 </body>
+</html>

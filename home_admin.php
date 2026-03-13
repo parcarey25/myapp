@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 <?php
 if (session_status()===PHP_SESSION_NONE) session_start();
 require __DIR__.'/db.php';
@@ -71,11 +71,11 @@ body{background:#111;color:#fff;font-family:'Poppins',sans-serif}
     <div class="row mt-3">
       <div class="col-md-4">
         <a class="side-link" href="admin_dashboard.php">📈 Revenue & Reports</a>
-        <a class="side-link" href="users.php">🔧 User Management</a>
-        <a class="side-link" href="id_verifications.php">✅ ID Verifications</a>
-        <a class="side-link" href="payments.php">💳 Payments</a>
-        <a class="side-link" href="facilities.php">🏟 Facilities</a>
-        <a class="side-link" href="pos.php">🧾 POS</a>
+        <a class="side-link" href="all_user_info.php">🔧 User info</a>
+        <a class="side-link" href="admin_trainer_sched.php">🔧 User Management</a>
+        <a class="side-link" href="payments.php">💳 Record Payments</a>
+       <a class="side-link" href="extent_membership.php">💳 Record Payments</a>
+       <a class="side-link" href="rfid_load.php">💳 Record Payments</a>
         <a class="side-link" href="admin_site_settings.php">⚙️ Site Settings</a>
       </div>
       <div class="col-md-8">

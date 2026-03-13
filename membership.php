@@ -1,4 +1,4 @@
-<<<<<<< HEAD
+
 <?php
 // membership.php — Member Status + Extend Membership (auto-detects payments columns)
 session_start();

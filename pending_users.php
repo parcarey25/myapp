@@ -7,6 +7,8 @@ $myRole = strtolower($_SESSION['role'] ?? 'member');
 if (!in_array($myRole, ['staff','admin'], true)) { header('Location: home.php'); exit; }
 
 require __DIR__ . '/db.php';
+require_once __DIR__.'/send_mail.php'; 
+
 
 /* ---------- helpers ---------- */
 function has_column(mysqli $conn, string $table, string $column): bool {
@@ -70,13 +72,32 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if ($uid <= 0) {
       $errors[] = 'Invalid user id.';
     } else {
-      if ($act === 'approve') {
-        if ($st = $conn->prepare("UPDATE users SET status='active' WHERE id=?")) {
-          $st->bind_param('i', $uid);
-          $flash = $st->execute() ? 'User approved (activated).' : 'Failed to approve user.';
-          $st->close();
+    if ($act === 'approve') {
+    if ($st = $conn->prepare("UPDATE users SET status='active' WHERE id=?")) {
+        $st->bind_param('i', $uid);
+        $ok = $st->execute();
+        $flash = $ok ? 'User approved (activated).' : 'Failed to approve user.';
+        $st->close();
+
+        // If activation worked, send “registration approved” email (best effort)
+        if ($ok && function_exists('sendRegistrationApprovedEmail')) {
+            if ($st2 = $conn->prepare("SELECT email, full_name, username, id_number FROM users WHERE id=? LIMIT 1")) {
+                $st2->bind_param('i', $uid);
+                $st2->execute();
+                $res2 = $st2->get_result();
+                if ($res2 && ($userRow = $res2->fetch_assoc())) {
+                    $toEmail  = $userRow['email'];
+                    $toName   = $userRow['full_name'] ?: $userRow['username'];
+                    $idNumber = $userRow['id_number'] ?? '';
+                    // ignore errors, this is just a notification
+                    @sendRegistrationApprovedEmail($toEmail, $toName, $idNumber);
+                }
+                if ($res2) $res2->free();
+                $st2->close();
+                }
+             }
+          }
         }
-      }
       if ($act === 'reject') {
         if ($st = $conn->prepare("UPDATE users SET status='rejected' WHERE id=?")) {
           $st->bind_param('i', $uid);
