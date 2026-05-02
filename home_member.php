@@ -739,6 +739,11 @@ body {
                 <span class="icon">📋</span><span>Activity List</span>
             </a>
         </li>
+         <li>
+            <a class="sidebar-link<?= active_link('extending_membership.php', $current) ?>" href="extending_membership.php">
+                <span class="icon">🏋️‍♂️</span><span>Extend Membership</span>
+            </a>
+        </li>
        
     </ul>
 </aside>
