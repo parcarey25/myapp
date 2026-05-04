@@ -937,9 +937,7 @@ html,body{
     <li><a class="sidebar-link" href="pending_users.php"><span class="icon">⏳</span><span>Pending Approvals</span></a></li>
     <li><a class="sidebar-link" href="users.php"><span class="icon">👥</span><span>Users</span></a></li>
     <li><a class="sidebar-link" href="extend_membership.php"><span class="icon">💳</span><span>Extend Membership</span></a></li>
-    <li><a class="sidebar-link" href="all_attendance.php"><span class="icon">📅</span><span>Attendance</span></a></li>
     <li><a class="sidebar-link" href="rfid_load.php"><span class="icon">🏷️</span><span>Load RFID Card</span></a></li>
-    <li><a class="sidebar-link" href="pos.php"><span class="icon">🛒</span><span>Point of Sale</span></a></li>
     <li><a class="sidebar-link" href="gcash_pending.php"><span class="icon">⏳</span><span>Gcash Pending Approvals</span></a></li>
   </ul>
 </aside>
@@ -1025,11 +1023,11 @@ html,body{
         </div>
 
         <div class="quick-actions">
-          <a class="action-card" href="pos.php">
-            <div class="action-icon">🛒</div>
+          <a class="action-card" href="membership_monitor.php">
+            <div class="action-icon">✅</div>
             <div>
-              <strong>Open POS</strong>
-              <span>Process cashier transactions</span>
+              <strong>Open Member Status</strong>
+              <span>Cashier monitor member status</span>
             </div>
           </a>
 

@@ -93,3 +93,39 @@ sending limits go to
 [2026-04-28 15:37:25] login email error: SMTP Error: Could not connect to SMTP host. Failed to connect to server SMTP server error: Failed to connect to server Additional SMTP info: php_network_getaddresses: getaddrinfo for smtp.gmail.com failed: No such host is known. 
 [2026-04-28 15:44:10] login email error: SMTP Error: Could not connect to SMTP host. Failed to connect to server SMTP server error: Failed to connect to server Additional SMTP info: php_network_getaddresses: getaddrinfo for smtp.gmail.com failed: No such host is known. 
 [2026-04-28 15:48:42] login email error: SMTP Error: Could not connect to SMTP host. Failed to connect to server SMTP server error: Failed to connect to server Additional SMTP info: php_network_getaddresses: getaddrinfo for smtp.gmail.com failed: No such host is known. 
+[2026-05-03 14:30:02] login email error: SMTP Error: data not accepted. SMTP server error: DATA command failed Detail: Daily user sending limit exceeded. For more information on Gmail
+sending limits go to
+ https://support.google.com/a/answer/166852 d2e1a72fcca58-835532a3aa2sm1086449b3a.41 - gsmtp
+ SMTP code: 550 Additional SMTP info: 5.4.5
+[2026-05-03 15:20:34] login email error: SMTP Error: data not accepted. SMTP server error: DATA command failed Detail: Daily user sending limit exceeded. For more information on Gmail
+sending limits go to
+ https://support.google.com/a/answer/166852 d9443c01a7336-2b9cae0e605sm67089025ad.41 - gsmtp
+ SMTP code: 550 Additional SMTP info: 5.4.5
+[2026-05-03 15:20:37] login email error: SMTP Error: data not accepted. SMTP server error: DATA command failed Detail: Daily user sending limit exceeded. For more information on Gmail
+sending limits go to
+ https://support.google.com/a/answer/166852 d9443c01a7336-2b9cae6ac32sm70336125ad.83 - gsmtp
+ SMTP code: 550 Additional SMTP info: 5.4.5
+[2026-05-03 17:58:54] login email error: SMTP Error: data not accepted. SMTP server error: DATA command failed Detail: Daily user sending limit exceeded. For more information on Gmail
+sending limits go to
+ https://support.google.com/a/answer/166852 d2e1a72fcca58-83515acfd8csm7939484b3a.29 - gsmtp
+ SMTP code: 550 Additional SMTP info: 5.4.5
+[2026-05-03 18:02:40] login email error: SMTP Error: data not accepted. SMTP server error: DATA command failed Detail: Daily user sending limit exceeded. For more information on Gmail
+sending limits go to
+ https://support.google.com/a/answer/166852 98e67ed59e1d1-364ec03cf53sm9871165a91.16 - gsmtp
+ SMTP code: 550 Additional SMTP info: 5.4.5
+[2026-05-03 18:07:32] login email error: SMTP Error: data not accepted. SMTP server error: DATA command failed Detail: Daily user sending limit exceeded. For more information on Gmail
+sending limits go to
+ https://support.google.com/a/answer/166852 d9443c01a7336-2b9cae16a9esm68218175ad.50 - gsmtp
+ SMTP code: 550 Additional SMTP info: 5.4.5
+[2026-05-03 18:09:00] login email error: SMTP Error: data not accepted. SMTP server error: DATA command failed Detail: Daily user sending limit exceeded. For more information on Gmail
+sending limits go to
+ https://support.google.com/a/answer/166852 d9443c01a7336-2b9cae363d9sm71902635ad.57 - gsmtp
+ SMTP code: 550 Additional SMTP info: 5.4.5
+[2026-05-03 18:37:44] login email error: SMTP Error: data not accepted. SMTP server error: DATA command failed Detail: Daily user sending limit exceeded. For more information on Gmail
+sending limits go to
+ https://support.google.com/a/answer/166852 d9443c01a7336-2b9caa7ee38sm69149225ad.16 - gsmtp
+ SMTP code: 550 Additional SMTP info: 5.4.5
+[2026-05-03 18:38:08] login email error: SMTP Error: data not accepted. SMTP server error: DATA command failed Detail: Daily user sending limit exceeded. For more information on Gmail
+sending limits go to
+ https://support.google.com/a/answer/166852 41be03b00d2f7-c8025008cb9sm1743291a12.30 - gsmtp
+ SMTP code: 550 Additional SMTP info: 5.4.5

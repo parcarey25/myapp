@@ -247,6 +247,37 @@ if ($payTable) {
 $receiptFile = __DIR__ . '/download_receipt.php';
 $receiptEnabled = file_exists($receiptFile);
 
+/* ---------------- Warm-up carousel pictures ----------------
+   Put these files inside your project photo folder:
+   photo/warmup1.png = Jumping Jacks
+   photo/warmup2.png = Arm Circles
+   photo/warmup3.png = Bodyweight Lunges
+   photo/warmup4.png = High Knees
+   photo/warmup5.png = Butt Kicks
+*/
+$warmupTips = [
+    [
+        'image' => 'photo/warmup1.png',
+        'title' => 'Jumping Jacks',
+    ],
+    [
+        'image' => 'photo/warmup2.png',
+        'title' => 'Arm Circles',
+    ],
+    [
+        'image' => 'photo/warmup3.png',
+        'title' => 'Bodyweight Lunges',
+    ],
+    [
+        'image' => 'photo/warmup4.png',
+        'title' => 'High Knees',
+    ],
+    [
+        'image' => 'photo/warmup5.png',
+        'title' => 'Butt Kicks',
+    ],
+];
+
 ?>
 <!doctype html>
 <html lang="en">
@@ -611,11 +642,11 @@ body {
 
 .tip-card { margin-top: 18px; }
 
-/* ✅ Cross-fade carousel (same width as container, 500px height) */
+/* ✅ Clean warm-up carousel: full picture fits inside the frame without cropping */
 .fade-carousel{
     position: relative;
     width: 100%;
-    height: 500px;              /* ✅ requested */
+    height: 560px;
     border-radius: 16px;
     overflow: hidden;
     border: 1px solid var(--panel-border);
@@ -629,13 +660,40 @@ body {
     opacity: 0;
     transition: opacity 1200ms ease-in-out;
     pointer-events: none;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background: #000;
 }
 .fade-slide.active{ opacity: 1; pointer-events: auto; }
 
+/* blurred duplicate background fills empty sides cleanly */
+.fade-slide::before{
+    content: "";
+    position: absolute;
+    inset: 0;
+    background-image: var(--warmup-bg);
+    background-size: cover;
+    background-position: center;
+    filter: blur(24px);
+    transform: scale(1.14);
+    opacity: 0.35;
+}
+
+.fade-slide::after{
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(90deg, rgba(0,0,0,.55), rgba(0,0,0,.08), rgba(0,0,0,.55));
+}
+
 .fade-slide img{
+    position: relative;
+    z-index: 2;
     width: 100%;
     height: 100%;
-    object-fit: cover;          /* ✅ fills the box */
+    object-fit: contain;          /* ✅ IMPORTANT: shows the exact full picture */
     object-position: center;
     display: block;
 }
@@ -649,7 +707,7 @@ body {
     height: 46px;
     border-radius: 999px;
     border: 1px solid rgba(255,255,255,0.25);
-    background: rgba(0,0,0,0.45);
+    background: rgba(0,0,0,0.50);
     color: #fff;
     font-size: 26px;
     line-height: 1;
@@ -661,7 +719,7 @@ body {
     z-index: 5;
 }
 .fade-nav:hover{
-    background: rgba(179,0,0,0.35);
+    background: rgba(179,0,0,0.70);
     border-color: rgba(255,255,255,0.35);
 }
 .fade-nav.prev{ left: 14px; }
@@ -826,7 +884,7 @@ body {
             </div>
 
             <div class="d-flex flex-wrap align-items-center mt-3" style="gap:10px;">
-                <a href="extend_membership.php" class="btn btn-pill-red">Extend Membership</a>
+                <a href="extending_membership.php" class="btn btn-pill-red">Extend Membership</a>
 
                 <?php if ($receiptEnabled): ?>
                     <a href="download_receipt.php" class="btn btn-outline-soft">Download Receipt</a>
@@ -890,18 +948,21 @@ body {
         </section>
     </div>
 
-    <!-- ✅ SAME WIDTH as container, 500px height, fills box -->
+    <!-- ✅ Clean Warm-Up carousel: shows the whole picture inside the frame -->
     <section class="card-dark tip-card">
         <div class="membership-title" style="margin-bottom:10px;">
             <h5 style="margin:0;">🔥 Today’s Warm-Up Tip</h5>
         </div>
 
         <div class="fade-carousel" id="warmupFadeCarousel">
-            <div class="fade-slide active"><img src="photo/boxer.jpg" alt="Warm-up slide 1"></div>
-            <div class="fade-slide"><img src="photo/bodybuilder.jpeg" alt="Warm-up slide 2"></div>
-            <div class="fade-slide"><img src="photo/boxer.jpg" alt="Warm-up slide 3"></div>
-            <div class="fade-slide"><img src="photo/muay_thai.jpeg" alt="Warm-up slide 4"></div>
-            <div class="fade-slide"><img src="photo/zumbainstractor.jpeg" alt="Warm-up slide 5"></div>
+            <?php foreach ($warmupTips as $index => $tip): ?>
+                <div
+                    class="fade-slide <?= $index === 0 ? 'active' : '' ?>"
+                    style="--warmup-bg: url('<?= h($tip['image']) ?>');"
+                >
+                    <img src="<?= h($tip['image']) ?>" alt="<?= h($tip['title']) ?>">
+                </div>
+            <?php endforeach; ?>
 
             <button class="fade-nav prev" type="button" aria-label="Previous">&lt;</button>
             <button class="fade-nav next" type="button" aria-label="Next">&gt;</button>
