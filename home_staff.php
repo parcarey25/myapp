@@ -129,19 +129,86 @@ if ($bookTable) {
     }
 }
 
-$paymentsTodayCount = 'N/A';
-$paymentsTodaySum   = 'N/A';
+/*
+|--------------------------------------------------------------------------
+| TODAY'S SALES
+|--------------------------------------------------------------------------
+| Count ONLY real money received:
+| ✅ RFID wallet load / Cash Load / RFID Load
+| ✅ GCash / GCash QR
+|
+| Do NOT count:
+| ❌ RFID Wallet / RFID Balance payments
+|--------------------------------------------------------------------------
+*/
+
+$paymentsTodayCount = 0;
+$paymentsTodaySum   = '0.00';
 $paymentsTable = table_exists($conn, 'payments') ? 'payments' : null;
 
 if ($paymentsTable) {
-    $amtCol = first_col($conn, $paymentsTable, ['amount','total','paid_amount']);
-    $dateCol = first_col($conn, $paymentsTable, ['created_at','paid_at','date_paid','payment_date','transaction_date']);
+    $amtCol    = first_col($conn, $paymentsTable, ['amount','total','paid_amount']);
+    $dateCol   = first_col($conn, $paymentsTable, ['created_at','paid_at','date_paid','payment_date','transaction_date']);
+    $methodCol = first_col($conn, $paymentsTable, ['method','payment_method','mode_of_payment','payment_type']);
+    $noteCol   = first_col($conn, $paymentsTable, ['note','description','remarks','reference']);
 
     if ($amtCol) {
         if ($dateCol) {
+            $where = [];
+            $where[] = "DATE(`{$dateCol}`)=?";
+
+            /*
+              Method filter:
+              - Include RFID load wallet / Cash Load / RFID Load
+              - Include GCash QR / GCash
+              - Exclude RFID Wallet / RFID Balance
+            */
+            if ($methodCol) {
+                $where[] = "
+                    (
+                        LOWER(TRIM(`{$methodCol}`)) IN (
+                            'cash (load)',
+                            'cash load',
+                            'rfid load',
+                            'rfid wallet load',
+                            'wallet load',
+                            'gcash',
+                            'gcash qr',
+                            'gcash_qr',
+                            'gcash qr payment'
+                        )
+                        OR LOWER(TRIM(`{$methodCol}`)) LIKE '%gcash%'
+                        OR LOWER(TRIM(`{$methodCol}`)) LIKE '%load%'
+                    )
+                    AND LOWER(TRIM(`{$methodCol}`)) NOT IN (
+                        'rfid wallet',
+                        'rfid balance',
+                        'wallet balance'
+                    )
+                ";
+            }
+
+            /*
+              If method column is missing but note/description exists,
+              still try to count wallet loads and GCash from notes.
+            */
+            if (!$methodCol && $noteCol) {
+                $where[] = "
+                    (
+                        LOWER(TRIM(`{$noteCol}`)) LIKE '%rfid wallet load%'
+                        OR LOWER(TRIM(`{$noteCol}`)) LIKE '%wallet load%'
+                        OR LOWER(TRIM(`{$noteCol}`)) LIKE '%cash load%'
+                        OR LOWER(TRIM(`{$noteCol}`)) LIKE '%gcash%'
+                    )
+                    AND LOWER(TRIM(`{$noteCol}`)) NOT LIKE '%rfid wallet payment%'
+                    AND LOWER(TRIM(`{$noteCol}`)) NOT LIKE '%rfid balance%'
+                ";
+            }
+
             $sql = "SELECT COUNT(*) AS c, COALESCE(SUM(`{$amtCol}`),0) AS s
                     FROM `{$paymentsTable}`
-                    WHERE DATE(`{$dateCol}`)=?";
+                    WHERE " . implode(' AND ', $where);
+
             if ($st = $conn->prepare($sql)) {
                 $st->bind_param('s', $today);
                 $st->execute();
@@ -151,7 +218,56 @@ if ($paymentsTable) {
                 $st->close();
             }
         } else {
+            /*
+              Fallback only if your payments table has no date column.
+              Still filters out RFID Wallet / RFID Balance.
+            */
+            $where = [];
+
+            if ($methodCol) {
+                $where[] = "
+                    (
+                        LOWER(TRIM(`{$methodCol}`)) IN (
+                            'cash (load)',
+                            'cash load',
+                            'rfid load',
+                            'rfid wallet load',
+                            'wallet load',
+                            'gcash',
+                            'gcash qr',
+                            'gcash_qr',
+                            'gcash qr payment'
+                        )
+                        OR LOWER(TRIM(`{$methodCol}`)) LIKE '%gcash%'
+                        OR LOWER(TRIM(`{$methodCol}`)) LIKE '%load%'
+                    )
+                    AND LOWER(TRIM(`{$methodCol}`)) NOT IN (
+                        'rfid wallet',
+                        'rfid balance',
+                        'wallet balance'
+                    )
+                ";
+            }
+
+            if (!$methodCol && $noteCol) {
+                $where[] = "
+                    (
+                        LOWER(TRIM(`{$noteCol}`)) LIKE '%rfid wallet load%'
+                        OR LOWER(TRIM(`{$noteCol}`)) LIKE '%wallet load%'
+                        OR LOWER(TRIM(`{$noteCol}`)) LIKE '%cash load%'
+                        OR LOWER(TRIM(`{$noteCol}`)) LIKE '%gcash%'
+                    )
+                    AND LOWER(TRIM(`{$noteCol}`)) NOT LIKE '%rfid wallet payment%'
+                    AND LOWER(TRIM(`{$noteCol}`)) NOT LIKE '%rfid balance%'
+                ";
+            }
+
             $sql = "SELECT COUNT(*) AS c, COALESCE(SUM(`{$amtCol}`),0) AS s FROM `{$paymentsTable}`";
+
+            if ($where) {
+                $sql .= " WHERE " . implode(' AND ', $where);
+            }
+
             if ($res = $conn->query($sql)) {
                 $row = $res->fetch_assoc();
                 $paymentsTodayCount = (int)($row['c'] ?? 0);
@@ -174,9 +290,10 @@ if (table_exists($conn, 'facilities')) {
 $recentPayments = [];
 if ($paymentsTable) {
     $uidCol = first_col($conn, $paymentsTable, ['user_id','member_id']);
-    $amtCol = first_col($conn, $paymentsTable, ['amount','total']);
-    $refCol = first_col($conn, $paymentsTable, ['reference','description','remarks']);
+    $amtCol = first_col($conn, $paymentsTable, ['amount','total','paid_amount']);
+    $refCol = first_col($conn, $paymentsTable, ['reference','description','remarks','note']);
     $dateCol= first_col($conn, $paymentsTable, ['created_at','paid_at','payment_date','date_paid']);
+
     if ($uidCol && $amtCol) {
         $sql = "SELECT `{$uidCol}` AS uid,
                        `{$amtCol}` AS amt"
@@ -939,6 +1056,9 @@ html,body{
     <li><a class="sidebar-link" href="extend_membership.php"><span class="icon">💳</span><span>Extend Membership</span></a></li>
     <li><a class="sidebar-link" href="rfid_load.php"><span class="icon">🏷️</span><span>Load RFID Card</span></a></li>
     <li><a class="sidebar-link" href="gcash_pending.php"><span class="icon">⏳</span><span>Gcash Pending Approvals</span></a></li>
+    <li><a class="sidebar-link" href="membership_monitor.php"><span class="icon">👥</span><span>member monitoring</span></a></li>
+    <li><a class="sidebar-link" href="attendance_storage.php"><span class="icon">📁</span><span>attendance record</span></a></li>
+    <li><a class="sidebar-link" href="staff_id_cards.php"><span class="icon">🪪</span><span>RFID card</span></a></li>
   </ul>
 </aside>
 
@@ -1047,11 +1167,11 @@ html,body{
             </div>
           </a>
 
-          <a class="action-card" href="extend_membership.php">
+          <a class="action-card" href="all_attendance.php" target="_blank">
             <div class="action-icon">💳</div>
             <div>
-              <strong>Extend Membership</strong>
-              <span>Renew active accounts</span>
+              <strong>RFID Attendance</strong>
+              <span>record attendance</span>
             </div>
           </a>
         </div>

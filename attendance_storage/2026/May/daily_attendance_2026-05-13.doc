@@ -1,0 +1,335 @@
+<!doctype html>
+<html xmlns:o="urn:schemas-microsoft-com:office:office"
+      xmlns:w="urn:schemas-microsoft-com:office:word"
+      xmlns="http://www.w3.org/TR/REC-html40">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<title>Daily Attendance 2026-05-13</title>
+
+<style>
+    @page {
+        size: landscape;
+        margin: 0.45in;
+    }
+
+    body {
+        font-family: Arial, sans-serif;
+        color: #111111;
+        background: #ffffff;
+        margin: 0;
+    }
+
+    .header {
+        width: 100%;
+        border-bottom: 4px solid #b30000;
+        padding-bottom: 10px;
+        margin-bottom: 14px;
+    }
+
+    .brand {
+        font-size: 24px;
+        font-weight: bold;
+        color: #b30000;
+        margin: 0;
+    }
+
+    .title {
+        font-size: 20px;
+        font-weight: bold;
+        margin: 6px 0 0 0;
+        color: #111111;
+    }
+
+    .subtitle {
+        color: #555555;
+        font-size: 12px;
+        margin-top: 4px;
+    }
+
+    .summary {
+        margin: 12px 0 14px 0;
+        padding: 10px;
+        background: #f3f3f3;
+        border-left: 5px solid #b30000;
+        font-size: 12px;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 10px;
+    }
+
+    th {
+        background: #111111;
+        color: #ffffff;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        padding: 7px;
+        border: 1px solid #333333;
+        text-align: left;
+    }
+
+    td {
+        padding: 6px;
+        border: 1px solid #cccccc;
+        vertical-align: middle;
+    }
+
+    tr:nth-child(even) td {
+        background: #f7f7f7;
+    }
+
+    .empty {
+        text-align: center;
+        color: #777777;
+        padding: 20px;
+    }
+
+    .footer {
+        margin-top: 14px;
+        font-size: 10px;
+        color: #666666;
+        border-top: 1px solid #cccccc;
+        padding-top: 8px;
+    }
+</style>
+</head>
+
+<body>
+
+<div class="header">
+    <p class="brand">RJL Fitness</p>
+    <p class="title">Daily Attendance Report</p>
+    <div class="subtitle">RFID-based Time In / Time Out Record</div>
+</div>
+
+<div class="summary">
+    <strong>Attendance Date:</strong> 2026-05-13<br>
+    <strong>Total Users:</strong> 15<br>
+    <strong>Users With Attendance Record:</strong> 1<br>
+    <strong>Generated:</strong> 2026-05-13 03:19 AM
+</div>
+
+<table>
+    <thead>
+        <tr>
+            <th>#</th>
+            <th>Name</th>
+            <th>ID Number</th>
+            <th>Role</th>
+            <th>Date</th>
+            <th>Time In</th>
+            <th>Time Out</th>
+            <th>RFID UID</th>
+            <th>Email</th>
+            <th>Phone</th>
+        </tr>
+    </thead>
+    <tbody>
+        
+                <tr>
+                    <td>1</td>
+                    <td>admin one</td>
+                    <td>A-0225-01</td>
+                    <td>Admin</td>
+                    <td>2026-05-13</td>
+                    <td>—</td>
+                    <td>—</td>
+                    <td></td>
+                    <td>adminone@gmail.com</td>
+                    <td></td>
+                </tr>
+            
+                <tr>
+                    <td>2</td>
+                    <td>Angel Betito</td>
+                    <td>M-0225-10</td>
+                    <td>Member</td>
+                    <td>2026-05-13</td>
+                    <td>—</td>
+                    <td>—</td>
+                    <td></td>
+                    <td>titoangel27@gmail.com</td>
+                    <td>09076401555</td>
+                </tr>
+            
+                <tr>
+                    <td>3</td>
+                    <td>Front Desk</td>
+                    <td>S-0225-01</td>
+                    <td>Staff</td>
+                    <td>2026-05-13</td>
+                    <td>—</td>
+                    <td>—</td>
+                    <td></td>
+                    <td>staff1@example.com</td>
+                    <td></td>
+                </tr>
+            
+                <tr>
+                    <td>4</td>
+                    <td>Jastine Pangan</td>
+                    <td>M-0225-16</td>
+                    <td>Member</td>
+                    <td>2026-05-13</td>
+                    <td>03:19</td>
+                    <td>03:19</td>
+                    <td>0009803692</td>
+                    <td>jaylabano24@gmail.com</td>
+                    <td>09942577283</td>
+                </tr>
+            
+                <tr>
+                    <td>5</td>
+                    <td>jayson labano</td>
+                    <td>M-0225-14</td>
+                    <td>Member</td>
+                    <td>2026-05-13</td>
+                    <td>—</td>
+                    <td>—</td>
+                    <td></td>
+                    <td>markregieverzon0818@gmail.com</td>
+                    <td>0993673129</td>
+                </tr>
+            
+                <tr>
+                    <td>6</td>
+                    <td>jhonmark layugan</td>
+                    <td>M-0225-11</td>
+                    <td>Member</td>
+                    <td>2026-05-13</td>
+                    <td>—</td>
+                    <td>—</td>
+                    <td></td>
+                    <td>jomarsangil@gmail.com</td>
+                    <td>09564184136</td>
+                </tr>
+            
+                <tr>
+                    <td>7</td>
+                    <td>Joshua</td>
+                    <td>M-0225-17</td>
+                    <td>Member</td>
+                    <td>2026-05-13</td>
+                    <td>—</td>
+                    <td>—</td>
+                    <td>0009798166</td>
+                    <td>jefersonmaristela4@gmail.com</td>
+                    <td>09925828880</td>
+                </tr>
+            
+                <tr>
+                    <td>8</td>
+                    <td>kupal king inaka</td>
+                    <td>M-0225-13</td>
+                    <td>Member</td>
+                    <td>2026-05-13</td>
+                    <td>—</td>
+                    <td>—</td>
+                    <td>0011640295</td>
+                    <td>labanojayson01@gmail.com</td>
+                    <td>09936714964</td>
+                </tr>
+            
+                <tr>
+                    <td>9</td>
+                    <td>Leon Carlo S. Parcarey</td>
+                    <td>M-0225-09</td>
+                    <td>Member</td>
+                    <td>2026-05-13</td>
+                    <td>—</td>
+                    <td>—</td>
+                    <td></td>
+                    <td>leonparcarey25@gmail.com</td>
+                    <td>09942577283</td>
+                </tr>
+            
+                <tr>
+                    <td>10</td>
+                    <td>Leon Carlo S. Parcarey</td>
+                    <td>M-0225-01</td>
+                    <td>Member</td>
+                    <td>2026-05-13</td>
+                    <td>—</td>
+                    <td>—</td>
+                    <td></td>
+                    <td>parcareyleon25@gmail.com</td>
+                    <td>09942577283</td>
+                </tr>
+            
+                <tr>
+                    <td>11</td>
+                    <td>member 3</td>
+                    <td>M-0225-03</td>
+                    <td>Member</td>
+                    <td>2026-05-13</td>
+                    <td>—</td>
+                    <td>—</td>
+                    <td>0009730437</td>
+                    <td>leoncarloparcarey25@gmail.com</td>
+                    <td></td>
+                </tr>
+            
+                <tr>
+                    <td>12</td>
+                    <td>nash bobolandeng</td>
+                    <td>M-0225-15</td>
+                    <td>Member</td>
+                    <td>2026-05-13</td>
+                    <td>—</td>
+                    <td>—</td>
+                    <td>0009803091</td>
+                    <td>parcareyleoncarlo@gmail.com</td>
+                    <td>09123456789</td>
+                </tr>
+            
+                <tr>
+                    <td>13</td>
+                    <td>Rayver Henson</td>
+                    <td>M-0225-12</td>
+                    <td>Member</td>
+                    <td>2026-05-13</td>
+                    <td>—</td>
+                    <td>—</td>
+                    <td></td>
+                    <td>johnrayverhenson@gmail.com</td>
+                    <td>09926076122</td>
+                </tr>
+            
+                <tr>
+                    <td>14</td>
+                    <td>stafftwo</td>
+                    <td>S-0225-02</td>
+                    <td>Staff</td>
+                    <td>2026-05-13</td>
+                    <td>—</td>
+                    <td>—</td>
+                    <td></td>
+                    <td>stafftwo@gmail.com</td>
+                    <td></td>
+                </tr>
+            
+                <tr>
+                    <td>15</td>
+                    <td>trainer two</td>
+                    <td>T-0225-01</td>
+                    <td>Trainer</td>
+                    <td>2026-05-13</td>
+                    <td>—</td>
+                    <td>—</td>
+                    <td></td>
+                    <td>traner2@gmail.com</td>
+                    <td></td>
+                </tr>
+            
+    </tbody>
+</table>
+
+<div class="footer">
+    This document was generated by RJL Fitness Attendance Storage.
+</div>
+
+</body>
+</html>

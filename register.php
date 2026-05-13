@@ -163,6 +163,7 @@ $old = [
     'birthday' => '',
     'phone' => '',
     'address' => '',
+    'rfid' => '',
 ];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -174,6 +175,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $birthdayInput = trim($_POST['birthday'] ?? '');
     $phone = trim($_POST['phone'] ?? '');
     $address = trim($_POST['address'] ?? '');
+    $rfid = trim($_POST['rfid'] ?? '');
 
     $old = [
         'full_name' => $fullName,
@@ -182,6 +184,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'birthday' => $birthdayInput,
         'phone' => $phone,
         'address' => $address,
+        'rfid' => $rfid,
     ];
 
     if ($fullName === '') {
@@ -202,6 +205,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     if ($address === '') {
         $errors[] = 'Address is required.';
+    }
+
+    if ($rfid === '') {
+        $errors[] = 'RFID number is required.';
     }
 
     if (strlen($password) < 6) {
@@ -256,6 +263,45 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             if ($result && $result->num_rows > 0) {
                 $errors[] = 'Email is already registered.';
+            }
+
+            if ($result) {
+                $result->free();
+            }
+
+            $stmt->close();
+        }
+    }
+
+    /*
+        RFID FIX:
+        Your database uses rfid_uid, not rfid.
+        This keeps compatibility in case another database uses rfid.
+    */
+    $rfidColumn = null;
+
+    if (has_column($conn, 'users', 'rfid_uid')) {
+        $rfidColumn = 'rfid_uid';
+    } elseif (has_column($conn, 'users', 'rfid')) {
+        $rfidColumn = 'rfid';
+    }
+
+    if (!$errors && !$rfidColumn) {
+        $errors[] = 'Users table has no RFID column. Expected rfid_uid.';
+    }
+
+    if (!$errors && $rfidColumn && $rfid !== '') {
+        $sqlCheckRfid = "SELECT id FROM users WHERE `$rfidColumn` = ? LIMIT 1";
+        $stmt = $conn->prepare($sqlCheckRfid);
+
+        if ($stmt) {
+            $stmt->bind_param('s', $rfid);
+            $stmt->execute();
+
+            $result = $stmt->get_result();
+
+            if ($result && $result->num_rows > 0) {
+                $errors[] = 'RFID number is already registered.';
             }
 
             if ($result) {
@@ -419,6 +465,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $params[] = $birthdate;
         }
 
+        if ($rfidColumn && $rfid !== '') {
+            $columns[] = $rfidColumn;
+            $placeholders[] = '?';
+            $types .= 's';
+            $params[] = $rfid;
+        }
+
         $avatarColumn = null;
 
         if (has_column($conn, 'users', 'avatar_path')) {
@@ -492,6 +545,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                         'birthday' => '',
                         'phone' => '',
                         'address' => '',
+                        'rfid' => '',
                     ];
                 }
             }
@@ -1206,8 +1260,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 value="<?= h($old['birthday']) ?>"
                             >
                         </div>
-
-                        
                     </div>
 
                     <div class="field full">
@@ -1219,6 +1271,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             required
                         ><?= h($old['address']) ?></textarea>
                     </div>
+
+                    
+
                 </div>
             </div>
 

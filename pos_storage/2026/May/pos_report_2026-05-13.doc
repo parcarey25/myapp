@@ -1,0 +1,172 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>POS Report</title>
+<style>
+@page { size: landscape; margin: 0.45in; }
+body { font-family: Arial, sans-serif; color: #111; background: #fff; margin: 0; }
+.header { border-bottom: 4px solid #b30000; padding-bottom: 10px; margin-bottom: 14px; }
+.brand { font-size: 24px; font-weight: bold; color: #b30000; margin: 0; }
+.title { font-size: 20px; font-weight: bold; margin: 6px 0 0 0; }
+.sub { color: #555; font-size: 12px; }
+.summary { margin: 10px 0 12px 0; padding: 9px; background: #f3f3f3; border-left: 5px solid #b30000; font-size: 12px; }
+h2 { margin: 18px 0 6px 0; font-size: 16px; color: #b30000; }
+table { width: 100%; border-collapse: collapse; font-size: 9px; margin-bottom: 12px; }
+th { background: #111; color: #fff; padding: 6px; border: 1px solid #333; text-align: left; }
+td { padding: 5px; border: 1px solid #ccc; vertical-align: top; }
+tr:nth-child(even) td { background: #f7f7f7; }
+.empty { text-align: center; color: #777; padding: 18px; }
+.footer { margin-top: 14px; font-size: 10px; color: #666; border-top: 1px solid #ccc; padding-top: 8px; }
+</style>
+</head>
+<body>
+<div class="header">
+    <p class="brand">RJL Fitness</p>
+    <p class="title">POS Payment Report</p>
+    <div class="sub">Split into RFID Wallet Load, GCash QR, and RFID Balance</div>
+</div>
+
+<div class="summary">
+    <strong>Date:</strong> 2026-05-13<br>
+    <strong>RFID Wallet Load:</strong> ₱6,000.00<br>
+    <strong>GCash QR:</strong> ₱0.00<br>
+    <strong>RFID Balance:</strong> ₱6,000.00<br>
+    <strong>Grand Total:</strong> ₱12,000.00<br>
+    <strong>Generated:</strong> 2026-05-13 05:00 AM
+</div>
+
+
+        <h2>RFID Wallet Load</h2>
+        <div class="summary">
+            <strong>Total:</strong> ₱6,000.00
+            &nbsp; | &nbsp;
+            <strong>Records:</strong> 3
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Date/Time</th>
+                    <th>Name</th>
+                    <th>ID Number</th>
+                    <th>Method</th>
+                    <th>Amount</th>
+                    <th>Reference</th>
+                    <th>Status</th>
+                    <th>Source</th>
+                    <th>Note</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td>2026-05-13 04:03:15</td>
+                    <td>member 3</td>
+                    <td>M-0225-03</td>
+                    <td>RFID Wallet Load</td>
+                    <td>₱2,000.00</td>
+                    <td>LOAD-20260513-040314-6 | Wallet load for member 3</td>
+                    <td>—</td>
+                    <td>payments</td>
+                    <td>—</td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>2026-05-13 03:48:07</td>
+                    <td>member 3</td>
+                    <td>M-0225-03</td>
+                    <td>RFID Wallet Load</td>
+                    <td>₱2,000.00</td>
+                    <td>LOAD-20260513-034807-6 | Wallet load for member 3</td>
+                    <td>—</td>
+                    <td>payments</td>
+                    <td>—</td>
+                </tr>
+                <tr>
+                    <td>3</td>
+                    <td>2026-05-13 03:35:03</td>
+                    <td>member 3</td>
+                    <td>M-0225-03</td>
+                    <td>RFID Wallet Load</td>
+                    <td>₱2,000.00</td>
+                    <td>LOAD-20260513-033503-6 | Wallet load for member 3</td>
+                    <td>—</td>
+                    <td>payments</td>
+                    <td>—</td>
+                </tr></tbody>
+        </table>
+        <h2>GCash QR</h2>
+        <div class="summary">
+            <strong>Total:</strong> ₱0.00
+            &nbsp; | &nbsp;
+            <strong>Records:</strong> 0
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Date/Time</th>
+                    <th>Name</th>
+                    <th>ID Number</th>
+                    <th>Method</th>
+                    <th>Amount</th>
+                    <th>Reference</th>
+                    <th>Status</th>
+                    <th>Source</th>
+                    <th>Note</th>
+                </tr>
+            </thead>
+            <tbody><tr><td colspan="10" class="empty">No records.</td></tr></tbody>
+        </table>
+        <h2>RFID Balance</h2>
+        <div class="summary">
+            <strong>Total:</strong> ₱6,000.00
+            &nbsp; | &nbsp;
+            <strong>Records:</strong> 2
+        </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Date/Time</th>
+                    <th>Name</th>
+                    <th>ID Number</th>
+                    <th>Method</th>
+                    <th>Amount</th>
+                    <th>Reference</th>
+                    <th>Status</th>
+                    <th>Source</th>
+                    <th>Note</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td>2026-05-13 04:04:19</td>
+                    <td>member 3</td>
+                    <td>M-0225-03</td>
+                    <td>RFID Wallet</td>
+                    <td>₱3,000.00</td>
+                    <td>Membership Extension - Bodybuilding - 1 Month Pass · ₱3000.00 with trainor · 1 month</td>
+                    <td>—</td>
+                    <td>payments</td>
+                    <td>—</td>
+                </tr>
+                <tr>
+                    <td>2</td>
+                    <td>2026-05-13 03:35:55</td>
+                    <td>member 3</td>
+                    <td>M-0225-03</td>
+                    <td>RFID Wallet</td>
+                    <td>₱3,000.00</td>
+                    <td>Membership Extension - Bodybuilding - 1 Month Pass · ₱3000.00 with trainor · 1 month</td>
+                    <td>—</td>
+                    <td>payments</td>
+                    <td>—</td>
+                </tr></tbody>
+        </table>
+
+<div class="footer">Generated by RJL Fitness POS Storage.</div>
+</body>
+</html>

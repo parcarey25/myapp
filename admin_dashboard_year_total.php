@@ -8,7 +8,7 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
-require_once __DIR__ . '/pos_records_lib.php';
+require __DIR__ . '/db.php';
 
 $role = strtolower(trim($_SESSION['role'] ?? ''));
 

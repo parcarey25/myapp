@@ -1255,122 +1255,6 @@ a:hover {
     }
 }
 
-
-/* ============================================================
-   BURGER DRAWER FIX
-   Added only to make the existing burger open a menu.
-   No existing content removed.
-   ============================================================ */
-
-.burger {
-    cursor: pointer;
-    color: #fff;
-    appearance: none;
-    -webkit-appearance: none;
-}
-
-.admin-menu-backdrop {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,.60);
-    z-index: 2998;
-    display: none;
-}
-
-.admin-menu-backdrop.show {
-    display: block;
-}
-
-.admin-menu-drawer {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: min(310px, 88vw);
-    height: 100vh;
-    background:
-        radial-gradient(circle at top left, rgba(179,0,0,.32), transparent 34%),
-        linear-gradient(180deg, #171717, #090909);
-    border-right: 1px solid rgba(255,255,255,.14);
-    box-shadow: 18px 0 45px rgba(0,0,0,.55);
-    z-index: 2999;
-    transform: translateX(-105%);
-    transition: transform .22s ease;
-    padding: 18px;
-    overflow-y: auto;
-}
-
-.admin-menu-drawer.show {
-    transform: translateX(0);
-}
-
-.drawer-head {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 14px;
-    padding-bottom: 14px;
-    margin-bottom: 12px;
-    border-bottom: 1px solid rgba(255,255,255,.12);
-}
-
-.drawer-head strong {
-    display: block;
-    font-size: 1.1rem;
-    color: #fff;
-}
-
-.drawer-head span {
-    display: block;
-    margin-top: 3px;
-    color: rgba(255,255,255,.68);
-    font-size: .82rem;
-    letter-spacing: .12em;
-    text-transform: uppercase;
-    font-weight: 800;
-}
-
-.drawer-close {
-    width: 38px;
-    height: 38px;
-    border-radius: 12px;
-    border: 1px solid rgba(255,255,255,.14);
-    background: rgba(255,255,255,.06);
-    color: #fff;
-    font-size: 26px;
-    line-height: 1;
-    cursor: pointer;
-}
-
-.drawer-links {
-    display: grid;
-    gap: 9px;
-}
-
-.drawer-links a {
-    display: flex;
-    align-items: center;
-    min-height: 44px;
-    padding: 10px 12px;
-    border-radius: 14px;
-    background: rgba(255,255,255,.055);
-    border: 1px solid rgba(255,255,255,.09);
-    color: #fff;
-    font-weight: 850;
-    text-decoration: none;
-}
-
-.drawer-links a:hover {
-    background: rgba(255,255,255,.10);
-    color: #fff;
-    text-decoration: none;
-}
-
-.drawer-links .drawer-logout {
-    margin-top: 6px;
-    background: linear-gradient(135deg, #c40000, #ff2b2b);
-    border-color: transparent;
-}
-
 </style>
 </head>
 
@@ -1378,7 +1262,7 @@ a:hover {
 
 <header class="topbar">
     <div class="brand-block">
-        <button type="button" class="burger" id="adminBurgerBtn" aria-label="Open menu">☰</button>
+        <div class="burger">☰</div>
         <img src="photo/logo.jpg" class="logo" alt="RJL Fitness">
         <div>
             <div class="brand-title">RJL Fitness</div>
@@ -1393,35 +1277,6 @@ a:hover {
         <img src="<?= h($avatarPath) ?>" class="avatar" alt="Profile">
     </div>
 </header>
-
-<!-- Burger Drawer Menu - added without removing existing dashboard content -->
-<div class="admin-menu-backdrop" id="adminMenuBackdrop"></div>
-
-<aside class="admin-menu-drawer" id="adminMenuDrawer" aria-hidden="true">
-    <div class="drawer-head">
-        <div>
-            <strong>RJL Fitness</strong>
-            <span>Admin Menu</span>
-        </div>
-
-        <button type="button" class="drawer-close" id="adminMenuClose" aria-label="Close menu">
-            ×
-        </button>
-    </div>
-
-    <nav class="drawer-links">
-        <a href="home_admin.php">🏠 Admin Dashboard</a>
-        <a href="admin_users.php">👥 Manage Members</a>
-        <a href="payments.php">💳 View Payments</a>
-        <a href="membership_monitor.php">📋 Membership Monitor</a>
-        <a href="rfid_load.php">💰 Load RFID</a>
-        <a href="admin_dashboard.php">📈 Admin Revenue Dashboard</a>
-        <a href="all_pos_records.php">🧾 POS Records</a>
-        <a href="pos_storage.php">📁 POS Storage</a>
-        <a href="logout.php" class="drawer-logout">🚪 Logout</a>
-    </nav>
-</aside>
-
 
 <main class="page container-fluid">
 
@@ -1594,56 +1449,6 @@ new Chart(ctx, {
         }
     }
 });
-</script>
-
-
-<script>
-(function () {
-    const burger = document.getElementById('adminBurgerBtn');
-    const drawer = document.getElementById('adminMenuDrawer');
-    const backdrop = document.getElementById('adminMenuBackdrop');
-    const closeBtn = document.getElementById('adminMenuClose');
-
-    if (!burger || !drawer || !backdrop) {
-        return;
-    }
-
-    function openMenu() {
-        drawer.classList.add('show');
-        backdrop.classList.add('show');
-        drawer.setAttribute('aria-hidden', 'false');
-        burger.setAttribute('aria-expanded', 'true');
-    }
-
-    function closeMenu() {
-        drawer.classList.remove('show');
-        backdrop.classList.remove('show');
-        drawer.setAttribute('aria-hidden', 'true');
-        burger.setAttribute('aria-expanded', 'false');
-    }
-
-    burger.addEventListener('click', function (event) {
-        event.preventDefault();
-
-        if (drawer.classList.contains('show')) {
-            closeMenu();
-        } else {
-            openMenu();
-        }
-    });
-
-    backdrop.addEventListener('click', closeMenu);
-
-    if (closeBtn) {
-        closeBtn.addEventListener('click', closeMenu);
-    }
-
-    document.addEventListener('keydown', function (event) {
-        if (event.key === 'Escape' && drawer.classList.contains('show')) {
-            closeMenu();
-        }
-    });
-})();
 </script>
 
 </body>

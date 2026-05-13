@@ -711,8 +711,8 @@ foreach ($period as $d) {
     --text: #f5f5f5;
     --muted: #c2c7d0;
     --gold: #f3d1a1;
-    --radius: 24px;
-    --shadow: 0 18px 45px rgba(0,0,0,.55);
+    --radius: 18px;
+    --shadow: 0 10px 28px rgba(0,0,0,.45);
 }
 
 * {
@@ -723,8 +723,8 @@ body {
     margin: 0;
     min-height: 100vh;
     background:
-        radial-gradient(circle at top left, rgba(179,0,0,.26), transparent 32%),
-        radial-gradient(circle at bottom right, rgba(179,0,0,.18), transparent 30%),
+        radial-gradient(circle at top left, rgba(179,0,0,.20), transparent 30%),
+        radial-gradient(circle at bottom right, rgba(179,0,0,.12), transparent 28%),
         #030303;
     color: var(--text);
     font-family: "Segoe UI", Arial, sans-serif;
@@ -741,15 +741,15 @@ a:hover {
 }
 
 .topbar {
-    min-height: 96px;
+    min-height: 68px;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 18px;
-    padding: 18px 24px;
+    gap: 14px;
+    padding: 10px 18px;
     background: linear-gradient(90deg, #230000, #8d0000, #d00000);
     border-bottom: 1px solid rgba(255,255,255,.12);
-    box-shadow: 0 12px 38px rgba(0,0,0,.45);
+    box-shadow: 0 8px 24px rgba(0,0,0,.42);
     position: sticky;
     top: 0;
     z-index: 1000;
@@ -758,41 +758,41 @@ a:hover {
 .brand-block {
     display: flex;
     align-items: center;
-    gap: 14px;
+    gap: 10px;
 }
 
 .burger {
-    width: 58px;
-    height: 58px;
-    border-radius: 16px;
+    width: 44px;
+    height: 44px;
+    border-radius: 13px;
     background: rgba(0,0,0,.20);
     border: 1px solid rgba(255,255,255,.18);
     display: grid;
     place-items: center;
-    font-size: 30px;
+    font-size: 23px;
     line-height: 1;
 }
 
 .logo {
-    width: 66px;
-    height: 66px;
+    width: 48px;
+    height: 48px;
     object-fit: cover;
-    border-radius: 16px;
-    border: 2px solid rgba(255,255,255,.75);
+    border-radius: 13px;
+    border: 2px solid rgba(255,255,255,.72);
     background: #111;
 }
 
 .brand-title {
-    font-size: 1.5rem;
+    font-size: 1.2rem;
     font-weight: 1000;
     line-height: 1;
     letter-spacing: -.03em;
 }
 
 .brand-sub {
-    margin-top: 6px;
-    letter-spacing: .28em;
-    font-size: .83rem;
+    margin-top: 4px;
+    letter-spacing: .22em;
+    font-size: .70rem;
     color: rgba(255,255,255,.78);
     font-weight: 800;
 }
@@ -800,13 +800,13 @@ a:hover {
 .top-actions {
     display: flex;
     align-items: center;
-    gap: 14px;
+    gap: 10px;
     flex-wrap: wrap;
     justify-content: flex-end;
 }
 
 .welcome {
-    font-size: 1rem;
+    font-size: .95rem;
     font-weight: 600;
 }
 
@@ -814,13 +814,14 @@ a:hover {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    padding: 12px 20px;
+    padding: 9px 16px;
     border-radius: 999px;
     background: rgba(0,0,0,.26);
     border: 1px solid rgba(255,255,255,.14);
     font-weight: 900;
-    letter-spacing: .06em;
+    letter-spacing: .05em;
     text-transform: uppercase;
+    font-size: .86rem;
 }
 
 .logout-pill {
@@ -828,22 +829,24 @@ a:hover {
 }
 
 .avatar {
-    width: 62px;
-    height: 62px;
+    width: 46px;
+    height: 46px;
     object-fit: cover;
-    border-radius: 18px;
+    border-radius: 14px;
     border: 2px solid rgba(255,255,255,.8);
 }
 
 .page {
-    padding: 28px 14px 56px;
+    padding: 18px 14px 42px;
+    max-width: 1420px;
+    margin: 0 auto;
 }
 
 .hero-grid {
     display: grid;
     grid-template-columns: 1.35fr .95fr;
-    gap: 24px;
-    margin-bottom: 24px;
+    gap: 16px;
+    margin-bottom: 16px;
 }
 
 .hero-card,
@@ -851,7 +854,7 @@ a:hover {
 .metric-card,
 .report-card {
     background:
-        linear-gradient(135deg, rgba(255,255,255,.055), rgba(255,255,255,.02)),
+        linear-gradient(135deg, rgba(255,255,255,.052), rgba(255,255,255,.018)),
         var(--panel);
     border: 1px solid var(--line);
     border-radius: var(--radius);
@@ -860,60 +863,62 @@ a:hover {
 }
 
 .hero-card {
-    min-height: 250px;
-    padding: 32px;
+    min-height: 185px;
+    padding: 22px;
     background:
-        radial-gradient(circle at top left, rgba(255, 0, 0, .30), transparent 40%),
-        linear-gradient(135deg, rgba(179,0,0,.78), rgba(20,20,20,.96));
+        radial-gradient(circle at top left, rgba(255, 0, 0, .25), transparent 38%),
+        linear-gradient(135deg, rgba(179,0,0,.72), rgba(20,20,20,.96));
 }
 
 .hero-kicker {
     display: inline-flex;
-    padding: 10px 16px;
+    padding: 7px 12px;
     border-radius: 999px;
     background: rgba(255,255,255,.10);
     border: 1px solid rgba(255,255,255,.12);
     color: #fff;
-    font-size: .82rem;
+    font-size: .72rem;
     font-weight: 900;
-    letter-spacing: .12em;
+    letter-spacing: .10em;
     text-transform: uppercase;
-    margin-bottom: 18px;
+    margin-bottom: 12px;
 }
 
 .hero-title {
     margin: 0;
-    font-size: clamp(2rem, 4vw, 3.4rem);
+    font-size: clamp(1.9rem, 3.2vw, 2.7rem);
     font-weight: 1000;
-    letter-spacing: -.06em;
+    letter-spacing: -.055em;
+    line-height: 1.05;
 }
 
 .hero-text {
-    margin: 12px 0 22px;
+    margin: 10px 0 16px;
     color: rgba(255,255,255,.86);
-    max-width: 780px;
-    line-height: 1.65;
-    font-size: 1.05rem;
+    max-width: 760px;
+    line-height: 1.5;
+    font-size: .98rem;
 }
 
 .hero-actions {
     display: flex;
-    gap: 14px;
+    gap: 10px;
     flex-wrap: wrap;
 }
 
 .hero-btn {
     display: inline-flex;
-    min-height: 48px;
+    min-height: 40px;
     align-items: center;
     justify-content: center;
-    padding: 12px 24px;
+    padding: 9px 18px;
     border-radius: 999px;
     font-weight: 1000;
-    letter-spacing: .06em;
+    letter-spacing: .05em;
     text-transform: uppercase;
     background: rgba(255,255,255,.12);
     border: 1px solid rgba(255,255,255,.15);
+    font-size: .88rem;
 }
 
 .hero-btn.primary {
@@ -922,22 +927,22 @@ a:hover {
 }
 
 .side-card {
-    padding: 22px;
+    padding: 16px;
     display: grid;
-    gap: 14px;
+    gap: 10px;
 }
 
 .side-link {
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 58px;
-    padding: 14px 18px;
+    min-height: 44px;
+    padding: 10px 14px;
     border-radius: 999px;
     background: linear-gradient(180deg, #252525, #191919);
     border: 1px solid rgba(255,255,255,.10);
     font-weight: 1000;
-    font-size: 1.05rem;
+    font-size: .95rem;
     box-shadow: inset 0 1px 0 rgba(255,255,255,.06);
 }
 
@@ -949,25 +954,25 @@ a:hover {
 .metric-grid {
     display: grid;
     grid-template-columns: repeat(4, minmax(0, 1fr));
-    gap: 18px;
-    margin-bottom: 24px;
+    gap: 14px;
+    margin-bottom: 16px;
 }
 
 .metric-card {
     position: relative;
-    min-height: 150px;
-    padding: 24px;
+    min-height: 112px;
+    padding: 17px 18px;
 }
 
 .metric-card::after {
     content: "";
     position: absolute;
-    width: 92px;
-    height: 92px;
-    border-radius: 0 0 0 60px;
+    width: 66px;
+    height: 66px;
+    border-radius: 0 0 0 45px;
     top: 0;
     right: 0;
-    background: rgba(179,0,0,.20);
+    background: rgba(179,0,0,.18);
 }
 
 .metric-label {
@@ -975,17 +980,17 @@ a:hover {
     z-index: 1;
     color: #d4d8df;
     text-transform: uppercase;
-    letter-spacing: .12em;
-    font-size: .9rem;
+    letter-spacing: .10em;
+    font-size: .78rem;
     font-weight: 1000;
-    margin-bottom: 16px;
+    margin-bottom: 10px;
 }
 
 .metric-value {
     position: relative;
     z-index: 1;
     margin: 0;
-    font-size: 2.1rem;
+    font-size: 1.7rem;
     font-weight: 1000;
     letter-spacing: -.04em;
 }
@@ -993,50 +998,51 @@ a:hover {
 .metric-sub {
     position: relative;
     z-index: 1;
-    margin-top: 10px;
+    margin-top: 7px;
     color: var(--muted);
-    font-size: .98rem;
-    line-height: 1.45;
+    font-size: .88rem;
+    line-height: 1.35;
 }
 
 .report-card {
-    padding: 24px;
+    padding: 18px;
 }
 
 .report-head {
     display: flex;
     justify-content: space-between;
     align-items: flex-start;
-    gap: 16px;
+    gap: 12px;
     flex-wrap: wrap;
     border-bottom: 1px solid var(--line);
-    padding-bottom: 18px;
-    margin-bottom: 18px;
+    padding-bottom: 12px;
+    margin-bottom: 14px;
 }
 
 .report-title {
     margin: 0;
-    font-size: 2rem;
+    font-size: 1.6rem;
     font-weight: 1000;
     letter-spacing: -.05em;
 }
 
 .report-sub {
     color: var(--muted);
-    margin-top: 6px;
-    font-size: 1.05rem;
+    margin-top: 4px;
+    font-size: .95rem;
 }
 
 .source {
     color: #d7dce5;
+    font-size: .9rem;
 }
 
 .chart-box {
-    height: 430px;
+    height: 330px;
     background: #101010;
     border: 1px solid rgba(255,255,255,.08);
-    border-radius: 18px;
-    padding: 14px;
+    border-radius: 16px;
+    padding: 12px;
 }
 
 @media (max-width: 1100px) {
@@ -1064,189 +1070,6 @@ a:hover {
     }
 
     .hero-card {
-        padding: 24px;
-    }
-}
-
-/* ============================================================
-   COMPACT ADMIN DASHBOARD OVERRIDE
-   Added only to minimize size.
-   No PHP logic, links, buttons, cards, or other code removed.
-   ============================================================ */
-
-:root {
-    --radius: 18px;
-    --shadow: 0 10px 28px rgba(0,0,0,.45);
-}
-
-.topbar {
-    min-height: 68px;
-    padding: 10px 18px;
-    gap: 12px;
-}
-
-.brand-block {
-    gap: 10px;
-}
-
-.burger {
-    width: 44px;
-    height: 44px;
-    border-radius: 13px;
-    font-size: 23px;
-}
-
-.logo {
-    width: 48px;
-    height: 48px;
-    border-radius: 13px;
-}
-
-.brand-title {
-    font-size: 1.2rem;
-}
-
-.brand-sub {
-    margin-top: 4px;
-    letter-spacing: .22em;
-    font-size: .70rem;
-}
-
-.top-actions {
-    gap: 10px;
-}
-
-.welcome {
-    font-size: .95rem;
-}
-
-.pill {
-    padding: 9px 16px;
-    font-size: .86rem;
-}
-
-.avatar {
-    width: 46px;
-    height: 46px;
-    border-radius: 14px;
-}
-
-.page {
-    padding: 18px 14px 42px;
-    max-width: 1420px;
-    margin: 0 auto;
-}
-
-.hero-grid {
-    gap: 16px;
-    margin-bottom: 16px;
-}
-
-.hero-card {
-    min-height: 185px;
-    padding: 22px;
-}
-
-.hero-kicker {
-    padding: 7px 12px;
-    font-size: .72rem;
-    margin-bottom: 12px;
-}
-
-.hero-title {
-    font-size: clamp(1.9rem, 3.2vw, 2.7rem);
-    line-height: 1.05;
-}
-
-.hero-text {
-    margin: 10px 0 16px;
-    line-height: 1.5;
-    font-size: .98rem;
-}
-
-.hero-actions {
-    gap: 10px;
-}
-
-.hero-btn {
-    min-height: 40px;
-    padding: 9px 18px;
-    font-size: .88rem;
-}
-
-.side-card {
-    padding: 16px;
-    gap: 10px;
-}
-
-.side-link {
-    min-height: 44px;
-    padding: 10px 14px;
-    font-size: .95rem;
-}
-
-.metric-grid {
-    gap: 14px;
-    margin-bottom: 16px;
-}
-
-.metric-card {
-    min-height: 112px;
-    padding: 17px 18px;
-}
-
-.metric-card::after {
-    width: 66px;
-    height: 66px;
-    border-radius: 0 0 0 45px;
-}
-
-.metric-label {
-    font-size: .78rem;
-    margin-bottom: 10px;
-}
-
-.metric-value {
-    font-size: 1.7rem;
-}
-
-.metric-sub {
-    margin-top: 7px;
-    font-size: .88rem;
-    line-height: 1.35;
-}
-
-.report-card {
-    padding: 18px;
-}
-
-.report-head {
-    gap: 12px;
-    padding-bottom: 12px;
-    margin-bottom: 14px;
-}
-
-.report-title {
-    font-size: 1.6rem;
-}
-
-.report-sub {
-    margin-top: 4px;
-    font-size: .95rem;
-}
-
-.source {
-    font-size: .9rem;
-}
-
-.chart-box {
-    height: 330px;
-    border-radius: 16px;
-    padding: 12px;
-}
-
-@media (max-width: 640px) {
-    .hero-card {
         padding: 18px;
     }
 
@@ -1254,123 +1077,6 @@ a:hover {
         font-size: 1.75rem;
     }
 }
-
-
-/* ============================================================
-   BURGER DRAWER FIX
-   Added only to make the existing burger open a menu.
-   No existing content removed.
-   ============================================================ */
-
-.burger {
-    cursor: pointer;
-    color: #fff;
-    appearance: none;
-    -webkit-appearance: none;
-}
-
-.admin-menu-backdrop {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,.60);
-    z-index: 2998;
-    display: none;
-}
-
-.admin-menu-backdrop.show {
-    display: block;
-}
-
-.admin-menu-drawer {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: min(310px, 88vw);
-    height: 100vh;
-    background:
-        radial-gradient(circle at top left, rgba(179,0,0,.32), transparent 34%),
-        linear-gradient(180deg, #171717, #090909);
-    border-right: 1px solid rgba(255,255,255,.14);
-    box-shadow: 18px 0 45px rgba(0,0,0,.55);
-    z-index: 2999;
-    transform: translateX(-105%);
-    transition: transform .22s ease;
-    padding: 18px;
-    overflow-y: auto;
-}
-
-.admin-menu-drawer.show {
-    transform: translateX(0);
-}
-
-.drawer-head {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    gap: 14px;
-    padding-bottom: 14px;
-    margin-bottom: 12px;
-    border-bottom: 1px solid rgba(255,255,255,.12);
-}
-
-.drawer-head strong {
-    display: block;
-    font-size: 1.1rem;
-    color: #fff;
-}
-
-.drawer-head span {
-    display: block;
-    margin-top: 3px;
-    color: rgba(255,255,255,.68);
-    font-size: .82rem;
-    letter-spacing: .12em;
-    text-transform: uppercase;
-    font-weight: 800;
-}
-
-.drawer-close {
-    width: 38px;
-    height: 38px;
-    border-radius: 12px;
-    border: 1px solid rgba(255,255,255,.14);
-    background: rgba(255,255,255,.06);
-    color: #fff;
-    font-size: 26px;
-    line-height: 1;
-    cursor: pointer;
-}
-
-.drawer-links {
-    display: grid;
-    gap: 9px;
-}
-
-.drawer-links a {
-    display: flex;
-    align-items: center;
-    min-height: 44px;
-    padding: 10px 12px;
-    border-radius: 14px;
-    background: rgba(255,255,255,.055);
-    border: 1px solid rgba(255,255,255,.09);
-    color: #fff;
-    font-weight: 850;
-    text-decoration: none;
-}
-
-.drawer-links a:hover {
-    background: rgba(255,255,255,.10);
-    color: #fff;
-    text-decoration: none;
-}
-
-.drawer-links .drawer-logout {
-    margin-top: 6px;
-    background: linear-gradient(135deg, #c40000, #ff2b2b);
-    border-color: transparent;
-}
-
 </style>
 </head>
 
@@ -1378,7 +1084,7 @@ a:hover {
 
 <header class="topbar">
     <div class="brand-block">
-        <button type="button" class="burger" id="adminBurgerBtn" aria-label="Open menu">☰</button>
+        <div class="burger">☰</div>
         <img src="photo/logo.jpg" class="logo" alt="RJL Fitness">
         <div>
             <div class="brand-title">RJL Fitness</div>
@@ -1393,35 +1099,6 @@ a:hover {
         <img src="<?= h($avatarPath) ?>" class="avatar" alt="Profile">
     </div>
 </header>
-
-<!-- Burger Drawer Menu - added without removing existing dashboard content -->
-<div class="admin-menu-backdrop" id="adminMenuBackdrop"></div>
-
-<aside class="admin-menu-drawer" id="adminMenuDrawer" aria-hidden="true">
-    <div class="drawer-head">
-        <div>
-            <strong>RJL Fitness</strong>
-            <span>Admin Menu</span>
-        </div>
-
-        <button type="button" class="drawer-close" id="adminMenuClose" aria-label="Close menu">
-            ×
-        </button>
-    </div>
-
-    <nav class="drawer-links">
-        <a href="home_admin.php">🏠 Admin Dashboard</a>
-        <a href="admin_users.php">👥 Manage Members</a>
-        <a href="payments.php">💳 View Payments</a>
-        <a href="membership_monitor.php">📋 Membership Monitor</a>
-        <a href="rfid_load.php">💰 Load RFID</a>
-        <a href="admin_dashboard.php">📈 Admin Revenue Dashboard</a>
-        <a href="all_pos_records.php">🧾 POS Records</a>
-        <a href="pos_storage.php">📁 POS Storage</a>
-        <a href="logout.php" class="drawer-logout">🚪 Logout</a>
-    </nav>
-</aside>
-
 
 <main class="page container-fluid">
 
@@ -1594,56 +1271,6 @@ new Chart(ctx, {
         }
     }
 });
-</script>
-
-
-<script>
-(function () {
-    const burger = document.getElementById('adminBurgerBtn');
-    const drawer = document.getElementById('adminMenuDrawer');
-    const backdrop = document.getElementById('adminMenuBackdrop');
-    const closeBtn = document.getElementById('adminMenuClose');
-
-    if (!burger || !drawer || !backdrop) {
-        return;
-    }
-
-    function openMenu() {
-        drawer.classList.add('show');
-        backdrop.classList.add('show');
-        drawer.setAttribute('aria-hidden', 'false');
-        burger.setAttribute('aria-expanded', 'true');
-    }
-
-    function closeMenu() {
-        drawer.classList.remove('show');
-        backdrop.classList.remove('show');
-        drawer.setAttribute('aria-hidden', 'true');
-        burger.setAttribute('aria-expanded', 'false');
-    }
-
-    burger.addEventListener('click', function (event) {
-        event.preventDefault();
-
-        if (drawer.classList.contains('show')) {
-            closeMenu();
-        } else {
-            openMenu();
-        }
-    });
-
-    backdrop.addEventListener('click', closeMenu);
-
-    if (closeBtn) {
-        closeBtn.addEventListener('click', closeMenu);
-    }
-
-    document.addEventListener('keydown', function (event) {
-        if (event.key === 'Escape' && drawer.classList.contains('show')) {
-            closeMenu();
-        }
-    });
-})();
 </script>
 
 </body>

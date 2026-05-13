@@ -129,3 +129,22 @@ sending limits go to
 sending limits go to
  https://support.google.com/a/answer/166852 41be03b00d2f7-c8025008cb9sm1743291a12.30 - gsmtp
  SMTP code: 550 Additional SMTP info: 5.4.5
+[2026-05-05 13:04:43] RFID load receipt error: Email sending is not configured. Set up Gmail SMTP in mailer.php or mail_config.php.
+[2026-05-05 13:10:58] RFID load receipt error: Email sending is not configured. Set up Gmail SMTP in mailer.php or mail_config.php.
+[2026-05-05 13:11:43] RFID load receipt error: Email sending is not configured. Set up Gmail SMTP in mailer.php or mail_config.php.
+[2026-05-05 13:12:11] RFID load receipt error: Email sending is not configured. Set up Gmail SMTP in mailer.php or mail_config.php.
+[2026-05-05 22:27:32] RFID load receipt error: Email sending is not configured. Set up Gmail SMTP in mailer.php or mail_config.php.
+[2026-05-05 22:28:00] extend_membership receipt error: SMTP Error: data not accepted. SMTP server error: DATA command failed Detail: Daily user sending limit exceeded. For more information on Gmail
+sending limits go to
+ https://support.google.com/a/answer/166852 d2e1a72fcca58-839659487afsm2341227b3a.18 - gsmtp
+ SMTP code: 550 Additional SMTP info: 5.4.5
+[2026-05-06 03:00:40] RFID load receipt error: Email sending is not configured. Set up Gmail SMTP in mailer.php or mail_config.php.
+[2026-05-06 03:01:55] extend_membership receipt error: SMTP Error: Could not connect to SMTP host. Failed to connect to server SMTP server error: Failed to connect to server Additional SMTP info: php_network_getaddresses: getaddrinfo for smtp.gmail.com failed: No such host is known. 
+[2026-05-06 07:04:21] RFID load receipt error: Email sending is not configured. Set up Gmail SMTP in mailer.php or mail_config.php.
+[2026-05-06 07:12:54] RFID load receipt error: Email sending is not configured. Set up Gmail SMTP in mailer.php or mail_config.php.
+[2026-05-06 07:14:22] extend_membership receipt error: SMTP Error: Could not connect to SMTP host. Failed to connect to server SMTP server error: Failed to connect to server Additional SMTP info: php_network_getaddresses: getaddrinfo for smtp.gmail.com failed: No such host is known. 
+[2026-05-06 10:48:54] RFID load receipt error: Email sending is not configured. Set up Gmail SMTP in mailer.php or mail_config.php.
+[2026-05-06 10:53:06] RFID load receipt error: Email sending is not configured. Set up Gmail SMTP in mailer.php or mail_config.php.
+[2026-05-13 03:35:05] RFID load receipt error: Email sending is not configured. Set up Gmail SMTP in mailer.php or mail_config.php.
+[2026-05-13 03:48:09] RFID load receipt error: Email sending is not configured. Set up Gmail SMTP in mailer.php or mail_config.php.
+[2026-05-13 04:03:17] RFID load receipt error: Email sending is not configured. Set up Gmail SMTP in mailer.php or mail_config.php.
