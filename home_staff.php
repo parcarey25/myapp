@@ -1058,6 +1058,7 @@ html,body{
     <li><a class="sidebar-link" href="gcash_pending.php"><span class="icon">⏳</span><span>Gcash Pending Approvals</span></a></li>
     <li><a class="sidebar-link" href="membership_monitor.php"><span class="icon">👥</span><span>member monitoring</span></a></li>
     <li><a class="sidebar-link" href="attendance_storage.php"><span class="icon">📁</span><span>attendance record</span></a></li>
+    <li><a class="sidebar-link" href="staff_set_rfid.php"><span class="icon">🪪</span><span>GEt RFID Number</span></a></li>
     <li><a class="sidebar-link" href="staff_id_cards.php"><span class="icon">🪪</span><span>RFID card</span></a></li>
   </ul>
 </aside>

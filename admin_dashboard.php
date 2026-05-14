@@ -1,5 +1,6 @@
 <?php
 // admin_dashboard.php
+
 // UPDATED REVENUE LOGIC:
 // Revenue Today / This Month / Year Total / Graph = GCash QR + RFID Wallet Load only.
 // RFID Balance payment is NOT counted.
@@ -8,7 +9,14 @@ if (session_status() === PHP_SESSION_NONE) {
     session_start();
 }
 
+// IMPORTANT: db.php creates the $conn mysqli connection
+require_once __DIR__ . '/db.php';
 require_once __DIR__ . '/pos_records_lib.php';
+
+// Safety check so the page gives a clear error if DB connection fails
+if (!isset($conn) || !($conn instanceof mysqli)) {
+    die("Database connection is missing. Please check db.php.");
+}
 
 $role = strtolower(trim($_SESSION['role'] ?? ''));
 
@@ -25,13 +33,8 @@ $monthEnd = date('Y-m-t');
 $yearStart = date('Y-01-01');
 $yearEnd = date('Y-12-31');
 
-$chartMode = strtolower(trim($_GET['chart'] ?? 'month'));
-
-if (!in_array($chartMode, ['month', 'year'], true)) {
-    $chartMode = 'month';
-}
-
-$debug = isset($_GET['debug']) && $_GET['debug'] === '1';
+$chartMode = $_GET['chart'] ?? 'month';
+$debug = isset($_GET['debug']);
 
 function h($value): string
 {

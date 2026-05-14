@@ -148,3 +148,4 @@ sending limits go to
 [2026-05-13 03:35:05] RFID load receipt error: Email sending is not configured. Set up Gmail SMTP in mailer.php or mail_config.php.
 [2026-05-13 03:48:09] RFID load receipt error: Email sending is not configured. Set up Gmail SMTP in mailer.php or mail_config.php.
 [2026-05-13 04:03:17] RFID load receipt error: Email sending is not configured. Set up Gmail SMTP in mailer.php or mail_config.php.
+[2026-05-14 05:46:44] RFID load receipt error: Email sending is not configured. Set up Gmail SMTP in mailer.php or mail_config.php.

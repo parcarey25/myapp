@@ -1411,14 +1411,14 @@ a:hover {
 
     <nav class="drawer-links">
         <a href="home_admin.php">🏠 Admin Dashboard</a>
-        <a href="admin_users.php">👥 Manage Members</a>
+        <a href="users.php">👥 Manage Members</a>
         <a href="payments.php">💳 View Payments</a>
         <a href="membership_monitor.php">📋 Membership Monitor</a>
         <a href="rfid_load.php">💰 Load RFID</a>
         <a href="admin_dashboard.php">📈 Admin Revenue Dashboard</a>
         <a href="all_pos_records.php">🧾 POS Records</a>
         <a href="pos_storage.php">📁 POS Storage</a>
-        <a href="logout.php" class="drawer-logout">🚪 Logout</a>
+        
     </nav>
 </aside>
 

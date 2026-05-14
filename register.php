@@ -207,9 +207,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $errors[] = 'Address is required.';
     }
 
-    if ($rfid === '') {
-        $errors[] = 'RFID number is required.';
-    }
+ 
 
     if (strlen($password) < 6) {
         $errors[] = 'Password must be at least 6 characters.';

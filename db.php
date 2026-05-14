@@ -1,13 +1,15 @@
 <?php
+
 // Always use Manila time for PHP
 date_default_timezone_set('Asia/Manila');
 
-$servername  = "localhost";
+$servername = "localhost";
 $db_username = "root";
 $db_password = "";
-$dbname      = "fit_db2";
+$dbname = "fit_db2";
 
 $conn = new mysqli($servername, $db_username, $db_password, $dbname);
+
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
